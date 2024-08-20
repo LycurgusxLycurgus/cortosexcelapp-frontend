@@ -1,0 +1,65 @@
+Project File Tree
+src/
+  src/api/api.ts
+  src/App.css
+  src/App.test.tsx
+  src/App.tsx
+  src/components/CreateTopic.tsx
+  src/components/Header.tsx
+  src/components/Login.tsx
+  src/components/Register.tsx
+  src/components/TopicList.tsx
+  src/index.css
+  src/index.tsx
+  src/logo.svg
+  src/react-app-env.d.ts
+  src/reportWebVitals.ts
+  src/setupTests.ts
+  src/theme.ts
+public/
+  public/favicon.ico
+  public/manifest.json
+  public/robots.txt
+context_llm/
+  context_llm/all_code_one_file.txt
+  context_llm/file_tree.txt
+  context_llm/process_flow/llm_process_flow.txt
+  context_llm/process_flow/vsc_process_flow.txt
+  context_llm/scripts/combine_files.sh
+  context_llm/scripts/generate_file_tree.sh
+  context_llm/scripts/run_both.sh
+  context_llm/scripts/script.txt
+./
+  ./context_llm/all_code_one_file.txt
+  ./context_llm/file_tree.txt
+  ./context_llm/process_flow/llm_process_flow.txt
+  ./context_llm/process_flow/vsc_process_flow.txt
+  ./context_llm/scripts/combine_files.sh
+  ./context_llm/scripts/generate_file_tree.sh
+  ./context_llm/scripts/run_both.sh
+  ./context_llm/scripts/script.txt
+  ./node_modules/.package-lock.json
+  ./node_modules/sanitize.css
+  ./package-lock.json
+  ./package.json
+  ./public/favicon.ico
+  ./public/manifest.json
+  ./public/robots.txt
+  ./README.md
+  ./src/api/api.ts
+  ./src/App.css
+  ./src/App.test.tsx
+  ./src/App.tsx
+  ./src/components/CreateTopic.tsx
+  ./src/components/Header.tsx
+  ./src/components/Login.tsx
+  ./src/components/Register.tsx
+  ./src/components/TopicList.tsx
+  ./src/index.css
+  ./src/index.tsx
+  ./src/logo.svg
+  ./src/react-app-env.d.ts
+  ./src/reportWebVitals.ts
+  ./src/setupTests.ts
+  ./src/theme.ts
+  ./tsconfig.json
