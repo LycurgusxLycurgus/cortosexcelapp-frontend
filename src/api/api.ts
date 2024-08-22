@@ -16,9 +16,8 @@ export const register = async (username: string, password: string) => {
   return response.data;
 };
 
-export const googleSignIn = async (token: string) => {
-  const response = await api.post('/auth/google', { token });
-  return response.data;
+export const googleSignIn = async () => {
+  window.location.href = `${API_URL}/auth/google`;
 };
 
 export const createTopic = async (content: string, token: string) => {

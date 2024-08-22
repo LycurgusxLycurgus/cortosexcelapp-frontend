@@ -30,18 +30,8 @@ const Login: React.FC = () => {
     }
   };
 
-  const handleGoogleSuccess = async (credentialResponse: any) => {
-    try {
-      const response = await googleSignIn(credentialResponse.credential);
-      localStorage.setItem('token', response.access_token);
-      navigate('/topics');
-    } catch (error) {
-      console.error('Google sign-in failed:', error);
-    }
-  };
-
-  const handleGoogleError = () => {
-    console.log('Login Failed');
+  const handleGoogleLogin = () => {
+    googleSignIn();
   };
 
   return (
@@ -73,10 +63,9 @@ const Login: React.FC = () => {
           </Button>
         </Box>
         <Divider sx={{ width: '100%', my: 2 }}>OR</Divider>
-        <GoogleLogin
-          onSuccess={handleGoogleSuccess}
-          onError={handleGoogleError}
-        />
+        <Button onClick={handleGoogleLogin} fullWidth variant="contained" color="secondary">
+          Sign in with Google
+        </Button>
       </Box>
     </Container>
   );
