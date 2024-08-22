@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { TextField, Button, Typography, Container, Box, Alert } from '@mui/material';
+import { TextField, Button, Typography, Container, Box, Alert, Divider } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { GoogleLogin } from '@react-oauth/google';
 import { register } from '../api/api';
 
 const Register: React.FC = () => {
@@ -29,6 +30,17 @@ const Register: React.FC = () => {
     } catch (error: any) {
       setError(error.response?.data?.message || 'Registration failed. Please try again.');
     }
+  };
+
+  const handleGoogleSuccess = (credentialResponse: any) => {
+    console.log(credentialResponse);
+    // Here you would typically send the credential to your backend
+    // and receive a token in response. For now, we'll just navigate to topics.
+    navigate('/topics');
+  };
+
+  const handleGoogleError = () => {
+    console.log('Registration Failed');
   };
 
   return (
@@ -60,6 +72,11 @@ const Register: React.FC = () => {
             Register
           </Button>
         </Box>
+        <Divider sx={{ width: '100%', my: 2 }}>OR</Divider>
+        <GoogleLogin
+          onSuccess={handleGoogleSuccess}
+          onError={handleGoogleError}
+        />
       </Box>
     </Container>
   );
