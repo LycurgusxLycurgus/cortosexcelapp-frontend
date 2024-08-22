@@ -48,7 +48,8 @@ append_files() {
     -not -path "./backend/*.lock" \
     -not -path "./backend/package-lock.json" \
     -not -path "./backend/.next/*" \
-    -not -path "./backend/yarn.lock"
+    -not -path "./backend/yarn.lock" \
+    -not -path "./dist/*" 
   ); do
     echo "### Filename: $file" >> "$output_file"
     cat "$file" >> "$output_file"

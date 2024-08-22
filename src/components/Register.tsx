@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { TextField, Button, Typography, Container, Box, Alert } from '@mui/material';
+import { TextField, Button, Typography, Container, Box, Alert, Divider } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { register } from '../api/api';
+import { register, googleSignIn } from '../api/api';
+import { GoogleLogin } from '@react-oauth/google';
 
 const Register: React.FC = () => {
   const [username, setUsername] = useState('');
@@ -29,6 +30,20 @@ const Register: React.FC = () => {
     } catch (error: any) {
       setError(error.response?.data?.message || 'Registration failed. Please try again.');
     }
+  };
+
+  const handleGoogleSuccess = async (credentialResponse: any) => {
+    try {
+      const result = await googleSignIn(credentialResponse.credential);
+      localStorage.setItem('token', result.access_token);
+      navigate('/topics');
+    } catch (error) {
+      console.error('Google sign-in failed:', error);
+    }
+  };
+
+  const handleGoogleFailure = () => {
+    console.error('Google sign-in error:');
   };
 
   return (
@@ -60,6 +75,12 @@ const Register: React.FC = () => {
             Register
           </Button>
         </Box>
+        <Divider sx={{ width: '100%', my: 2 }}>Or</Divider>
+        <GoogleLogin
+          onSuccess={handleGoogleSuccess}
+          onError={handleGoogleFailure}
+          useOneTap
+        />
       </Box>
     </Container>
   );

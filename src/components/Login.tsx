@@ -1,12 +1,21 @@
-import React, { useState } from 'react';
-import { TextField, Button, Typography, Container, Box } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { TextField, Button, Typography, Container, Box, Divider } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { login } from '../api/api';
+import { login, googleSignIn } from '../api/api';
+import { GoogleLogin } from '@react-oauth/google';
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = new URLSearchParams(window.location.search).get('token');
+    if (token) {
+      localStorage.setItem('token', token);
+      navigate('/topics');
+    }
+  }, [navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -17,6 +26,20 @@ const Login: React.FC = () => {
     } catch (error) {
       console.error('Login failed:', error);
     }
+  };
+
+  const handleGoogleSuccess = async (credentialResponse: any) => {
+    try {
+      const result = await googleSignIn(credentialResponse.credential);
+      localStorage.setItem('token', result.access_token);
+      navigate('/topics');
+    } catch (error) {
+      console.error('Google sign-in failed:', error);
+    }
+  };
+
+  const handleGoogleFailure = () => {
+    console.error('Google sign-in error:');
   };
 
   return (
@@ -47,6 +70,12 @@ const Login: React.FC = () => {
             Login
           </Button>
         </Box>
+        <Divider sx={{ width: '100%', my: 2 }}>Or</Divider>
+        <GoogleLogin
+          onSuccess={handleGoogleSuccess}
+          onError={handleGoogleFailure}
+          useOneTap
+        />
       </Box>
     </Container>
   );

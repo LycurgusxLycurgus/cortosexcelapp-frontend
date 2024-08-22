@@ -7,7 +7,7 @@ OUTPUT_FILE="./context_llm/file_tree.txt"
 INCLUDE_DIRS=("src" "public" "context_llm" ".")
 
 # Relevant file extensions and filenames
-FILE_EXTENSIONS=("ts" "tsx" "json" "svg" "ico" "css" "local" "sh" "txt" "ts" "mjs" "md")
+FILE_EXTENSIONS=("ts" "tsx" "json" "svg" "ico" "css" "local" "sh" "txt" "ts" "mjs" "md" "json" "yml" "sol" "local" "svg" "mjs" "prisma" "sql" "env")
 SPECIAL_FILES=("package.json" "tsconfig.json")
 
 # Function to check if a filename matches relevant criteria
@@ -26,7 +26,7 @@ function is_relevant {
     return 1
 }
 
-# Generate file tree and save to output file
+# Generate the file tree and save it to output file
 echo "Project File Tree" > $OUTPUT_FILE
 for dir in "${INCLUDE_DIRS[@]}"; do
     echo "$dir/" >> $OUTPUT_FILE
@@ -43,6 +43,7 @@ for dir in "${INCLUDE_DIRS[@]}"; do
           -path "./package-lock.json" -o \
           -path "./.next/*" -o \
           -path "./yarn.lock" -o \
+          -path "./dist/*" -o \
           -path "./frontend/node_modules/*" -o \
           -path "./frontend/.git/*" -o \
           -path "./frontend/.cache/*" -o \
@@ -67,7 +68,7 @@ for dir in "${INCLUDE_DIRS[@]}"; do
           -path "./backend/package-lock.json" -o \
           -path "./backend/.next/*" -o \
           -path "./backend/yarn.lock" \
-        \) -prune -o -type f | while read file; do
+        \) -prune -o -type f -print | while read file; do
         filename=$(basename "$file")
         if is_relevant "$filename"; then
             echo "  $file" >> $OUTPUT_FILE

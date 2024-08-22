@@ -30,6 +30,7 @@ context_llm/
   context_llm/scripts/run_both.sh
   context_llm/scripts/script.txt
 ./
+  ./.env
   ./context_llm/all_code_one_file.txt
   ./context_llm/file_tree.txt
   ./context_llm/process_flow/llm_process_flow.txt
@@ -38,9 +39,6 @@ context_llm/
   ./context_llm/scripts/generate_file_tree.sh
   ./context_llm/scripts/run_both.sh
   ./context_llm/scripts/script.txt
-  ./node_modules/.package-lock.json
-  ./node_modules/sanitize.css
-  ./package-lock.json
   ./package.json
   ./public/favicon.ico
   ./public/manifest.json
