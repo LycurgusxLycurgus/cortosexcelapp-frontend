@@ -48,7 +48,7 @@ const TopicList: React.FC = () => {
           <ListItem key={topic.id}>
             <ListItemText
               primary={topic.content}
-              secondary={`By ${topic.user.username.split('@')[0]} on ${format(new Date(topic.createdAt), 'PPpp')}`}
+              secondary={`By ${topic.user.username} on ${format(new Date(topic.createdAt), 'PPpp')}`}
             />
           </ListItem>
         ))}

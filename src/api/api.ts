@@ -16,11 +16,6 @@ export const register = async (username: string, password: string) => {
   return response.data;
 };
 
-export const googleSignIn = async (credential: string) => {
-  const response = await api.post('/auth/google', { credential });
-  return response.data;
-};
-
 export const createTopic = async (content: string, token: string) => {
   const response = await api.post('/topics', { content }, {
     headers: { Authorization: `Bearer ${token}` }
