@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { TextField, Button, Typography, Container, Box, Divider } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
-import { login } from '../api/api';
+import { login, googleSignIn } from '../api/api';
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState('');
@@ -30,11 +30,14 @@ const Login: React.FC = () => {
     }
   };
 
-  const handleGoogleSuccess = (credentialResponse: any) => {
-    console.log(credentialResponse);
-    // Here you would typically send the credential to your backend
-    // and receive a token in response. For now, we'll just navigate to topics.
-    navigate('/topics');
+  const handleGoogleSuccess = async (credentialResponse: any) => {
+    try {
+      const response = await googleSignIn(credentialResponse.credential);
+      localStorage.setItem('token', response.access_token);
+      navigate('/topics');
+    } catch (error) {
+      console.error('Google sign-in failed:', error);
+    }
   };
 
   const handleGoogleError = () => {
