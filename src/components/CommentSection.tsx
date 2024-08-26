@@ -26,16 +26,20 @@ const CommentSection: React.FC<CommentSectionProps> = ({ topicId, comments, onAd
   return (
     <div>
       <Typography variant="h6">Comments</Typography>
-      <List>
-        {comments.map((comment) => (
-          <ListItem key={comment.id}>
-            <ListItemText
-              primary={comment.content}
-              secondary={`By ${comment.user.username}`}
-            />
-          </ListItem>
-        ))}
-      </List>
+      {comments.length === 0 ? (
+        <Typography variant="body2">No comments yet.</Typography>
+      ) : (
+        <List>
+          {comments.map((comment) => (
+            <ListItem key={comment.id}>
+              <ListItemText
+                primary={comment.content}
+                secondary={`By ${comment.user.username}`}
+              />
+            </ListItem>
+          ))}
+        </List>
+      )}
       <TextField
         label="Add a comment"
         multiline

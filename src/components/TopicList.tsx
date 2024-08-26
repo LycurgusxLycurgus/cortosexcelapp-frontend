@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { List, ListItem, ListItemText, Typography, Container, Button, Checkbox, IconButton } from '@mui/material';
+import { List, ListItem, ListItemText, Typography, Container, Button, Checkbox, IconButton, CircularProgress } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { getTopics, updateTopic, toggleDiscussed, archiveTopic, addComment } from '../api/api';
 import { format } from 'date-fns';
@@ -29,16 +29,20 @@ interface Topic {
 const TopicList: React.FC = () => {
   const [topics, setTopics] = useState<Topic[]>([]);
   const [editingTopic, setEditingTopic] = useState<Topic | null>(null);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   const fetchTopics = useCallback(async () => {
     const token = localStorage.getItem('token');
     if (token) {
       try {
+        setLoading(true);
         const fetchedTopics = await getTopics(token);
         setTopics(fetchedTopics);
       } catch (error) {
         console.error('Failed to fetch topics:', error);
+      } finally {
+        setLoading(false);
       }
     } else {
       navigate('/login');
@@ -97,6 +101,14 @@ const TopicList: React.FC = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <Container maxWidth="md" sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <CircularProgress />
+      </Container>
+    );
+  }
+
   return (
     <Container maxWidth="md">
       <Typography variant="h4" component="h1" gutterBottom>
@@ -105,38 +117,42 @@ const TopicList: React.FC = () => {
       <Button variant="contained" color="primary" onClick={() => navigate('/create-topic')}>
         Create New Topic
       </Button>
-      <List>
-        {topics.map((topic) => (
-          <ListItem key={topic.id}>
-            <ListItemText
-              primary={topic.content}
-              secondary={`By ${topic.user.username} on ${format(new Date(topic.createdAt), 'PPpp')}`}
-            />
-            <PrioritySelector
-              priority={topic.priority}
-              onChange={(newPriority) => handleEditTopic(topic.id, topic.content, newPriority)}
-            />
-            <Checkbox
-              checked={topic.discussed}
-              onChange={() => handleToggleDiscussed(topic.id)}
-              inputProps={{ 'aria-label': 'Toggle discussed' }}
-            />
-            <IconButton onClick={() => setEditingTopic(topic)}>
-              <EditIcon />
-            </IconButton>
-            {topic.discussed && !topic.archived && (
-              <IconButton onClick={() => handleArchiveTopic(topic.id)}>
-                <ArchiveIcon />
+      {topics.length === 0 ? (
+        <Typography variant="body1" sx={{ mt: 2 }}>No topics available. Create a new one!</Typography>
+      ) : (
+        <List>
+          {topics.map((topic) => (
+            <ListItem key={topic.id}>
+              <ListItemText
+                primary={topic.content}
+                secondary={`By ${topic.user.username} on ${format(new Date(topic.createdAt), 'PPpp')}`}
+              />
+              <PrioritySelector
+                priority={topic.priority}
+                onChange={(newPriority) => handleEditTopic(topic.id, topic.content, newPriority)}
+              />
+              <Checkbox
+                checked={topic.discussed}
+                onChange={() => handleToggleDiscussed(topic.id)}
+                inputProps={{ 'aria-label': 'Toggle discussed' }}
+              />
+              <IconButton onClick={() => setEditingTopic(topic)}>
+                <EditIcon />
               </IconButton>
-            )}
-            <CommentSection
-              topicId={topic.id}
-              comments={topic.comments}
-              onAddComment={handleAddComment}
-            />
-          </ListItem>
-        ))}
-      </List>
+              {topic.discussed && !topic.archived && (
+                <IconButton onClick={() => handleArchiveTopic(topic.id)}>
+                  <ArchiveIcon />
+                </IconButton>
+              )}
+              <CommentSection
+                topicId={topic.id}
+                comments={topic.comments || []}
+                onAddComment={handleAddComment}
+              />
+            </ListItem>
+          ))}
+        </List>
+      )}
       {editingTopic && (
         <EditTopic
           topic={editingTopic}
