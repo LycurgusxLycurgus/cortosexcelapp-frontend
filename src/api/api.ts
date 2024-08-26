@@ -29,14 +29,8 @@ export const createTopic = async (content: string, priority: number, token: stri
 
 export const getTopics = async (token: string) => {
   const response = await api.get('/topics', {
-    headers: { Authorization: `Bearer ${token}` }
-  });
-  return response.data;
-};
-
-export const getComments = async (topicId: number, token: string) => {
-  const response = await api.get(`/topics/${topicId}/comments`, {
-    headers: { Authorization: `Bearer ${token}` }
+    headers: { Authorization: `Bearer ${token}` },
+    params: { include: 'comments' } // Add this line to request comments
   });
   return response.data;
 };

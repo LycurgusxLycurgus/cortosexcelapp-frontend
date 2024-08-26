@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { List, ListItem, ListItemText, Typography, Container, Button, Checkbox, IconButton, CircularProgress, Collapse } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { getTopics, updateTopic, toggleDiscussed, archiveTopic, addComment, getComments } from '../api/api';
+import { getTopics, updateTopic, toggleDiscussed, archiveTopic, addComment } from '../api/api';
 import { format } from 'date-fns';
 import EditIcon from '@mui/icons-material/Edit';
 import ArchiveIcon from '@mui/icons-material/Archive';
@@ -10,7 +10,7 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import PrioritySelector from './PrioritySelector';
 import EditTopic from './EditTopic';
 import CommentSection from './CommentSection';
-import axios from 'axios';
+import { AxiosError } from 'axios';
 
 interface Topic {
   id: number;
@@ -22,6 +22,7 @@ interface Topic {
   user: {
     username: string;
   };
+  comments: Comment[];
 }
 
 interface Comment {
@@ -34,8 +35,10 @@ const TopicList: React.FC = () => {
   const [topics, setTopics] = useState<Topic[]>([]);
   const [editingTopic, setEditingTopic] = useState<Topic | null>(null);
   const [loading, setLoading] = useState(true);
-  const [expandedTopic, setExpandedTopic] = useState<number | null>(null);
-  const [comments, setComments] = useState<{ [topicId: number]: Comment[] }>({});
+  const [expandedTopics, setExpandedTopics] = useState<Set<number>>(() => {
+    const stored = localStorage.getItem('expandedTopics');
+    return stored ? new Set(JSON.parse(stored)) : new Set();
+  });
   const navigate = useNavigate();
 
   const fetchTopics = useCallback(async () => {
@@ -59,23 +62,20 @@ const TopicList: React.FC = () => {
     fetchTopics();
   }, [fetchTopics]);
 
-  const handleExpandTopic = async (topicId: number) => {
-    if (expandedTopic === topicId) {
-      setExpandedTopic(null);
-    } else {
-      setExpandedTopic(topicId);
-      if (!comments[topicId]) {
-        const token = localStorage.getItem('token');
-        if (token) {
-          try {
-            const fetchedComments = await getComments(topicId, token);
-            setComments(prev => ({ ...prev, [topicId]: fetchedComments }));
-          } catch (error) {
-            console.error('Failed to fetch comments:', error);
-          }
-        }
+  useEffect(() => {
+    localStorage.setItem('expandedTopics', JSON.stringify(Array.from(expandedTopics)));
+  }, [expandedTopics]);
+
+  const handleExpandTopic = (topicId: number) => {
+    setExpandedTopics(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(topicId)) {
+        newSet.delete(topicId);
+      } else {
+        newSet.add(topicId);
       }
-    }
+      return newSet;
+    });
   };
 
   const handleAddComment = async (topicId: number, content: string) => {
@@ -83,10 +83,13 @@ const TopicList: React.FC = () => {
     if (token) {
       try {
         const addedComment = await addComment(topicId, content, token);
-        setComments(prev => ({
-          ...prev,
-          [topicId]: [...(prev[topicId] || []), addedComment]
-        }));
+        setTopics(prevTopics => 
+          prevTopics.map(topic => 
+            topic.id === topicId 
+              ? { ...topic, comments: [...topic.comments, addedComment] }
+              : topic
+          )
+        );
       } catch (error) {
         console.error('Failed to add comment:', error);
       }
@@ -100,10 +103,10 @@ const TopicList: React.FC = () => {
         await updateTopic(id, content, priority, token);
         fetchTopics();
       } catch (error) {
-        if (axios.isAxiosError(error)) {
-          console.error('Failed to update topic:', error.response?.data || error.message);
+        if (error instanceof Error) {
+          console.error('Failed to update topic:', error.message);
         } else {
-          console.error('Failed to update topic:', error);
+          console.error('Failed to update topic:', String(error));
         }
       }
     }
@@ -178,13 +181,13 @@ const TopicList: React.FC = () => {
                   </IconButton>
                 )}
                 <IconButton onClick={() => handleExpandTopic(topic.id)}>
-                  {expandedTopic === topic.id ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                  {expandedTopics.has(topic.id) ? <ExpandLessIcon /> : <ExpandMoreIcon />}
                 </IconButton>
               </ListItem>
-              <Collapse in={expandedTopic === topic.id}>
+              <Collapse in={expandedTopics.has(topic.id)}>
                 <CommentSection
                   topicId={topic.id}
-                  comments={comments[topic.id] || []}
+                  comments={topic.comments}
                   onAddComment={handleAddComment}
                 />
               </Collapse>
