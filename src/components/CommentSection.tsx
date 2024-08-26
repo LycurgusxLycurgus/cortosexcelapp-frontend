@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { List, ListItem, ListItemText, TextField, Button, Typography } from '@mui/material';
 import { addComment } from '../api/api';
 
@@ -16,7 +16,11 @@ interface CommentSectionProps {
 
 const CommentSection: React.FC<CommentSectionProps> = ({ topicId, comments: initialComments, onAddComment }) => {
   const [newComment, setNewComment] = useState('');
-  const [comments, setComments] = useState<Comment[]>(initialComments);
+  const [comments, setComments] = useState<Comment[]>(initialComments || []);
+
+  useEffect(() => {
+    setComments(initialComments || []);
+  }, [initialComments]);
 
   const handleAddComment = async () => {
     if (newComment.trim()) {

@@ -187,7 +187,7 @@ const TopicList: React.FC = () => {
               <Collapse in={expandedTopics.has(topic.id)}>
                 <CommentSection
                   topicId={topic.id}
-                  comments={topic.comments}
+                  comments={topic.comments || []}
                   onAddComment={handleAddComment}
                 />
               </Collapse>
