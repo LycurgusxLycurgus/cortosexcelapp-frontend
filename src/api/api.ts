@@ -29,12 +29,10 @@ export const createTopic = async (content: string, priority: number, token: stri
 
 export const getTopics = async (token: string) => {
   const response = await api.get('/topics', {
-    headers: { Authorization: `Bearer ${token}` }
+    headers: { Authorization: `Bearer ${token}` },
+    params: { include: 'comments' } // Add this line to request comments
   });
-  return response.data.map((topic: any) => ({
-    ...topic,
-    comments: topic.comments || []
-  }));
+  return response.data;
 };
 
 export const updateTopic = async (id: number, content: string, priority: number, token: string) => {

@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { List, ListItem, ListItemText, Typography, Container, Button, Checkbox, IconButton, CircularProgress } from '@mui/material';
+import { List, ListItem, ListItemText, Typography, Container, Button, Checkbox, IconButton, CircularProgress, Collapse } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { getTopics, updateTopic, toggleDiscussed, archiveTopic, addComment, createTopic } from '../api/api';
+import { getTopics, updateTopic, toggleDiscussed, archiveTopic, addComment } from '../api/api';
 import { format } from 'date-fns';
 import EditIcon from '@mui/icons-material/Edit';
 import ArchiveIcon from '@mui/icons-material/Archive';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import PrioritySelector from './PrioritySelector';
 import EditTopic from './EditTopic';
 import CommentSection from './CommentSection';
@@ -31,6 +33,7 @@ const TopicList: React.FC = () => {
   const [topics, setTopics] = useState<Topic[]>([]);
   const [editingTopic, setEditingTopic] = useState<Topic | null>(null);
   const [loading, setLoading] = useState(true);
+  const [expandedTopic, setExpandedTopic] = useState<number | null>(null);
   const navigate = useNavigate();
 
   const fetchTopics = useCallback(async () => {
@@ -99,23 +102,15 @@ const TopicList: React.FC = () => {
     if (token) {
       try {
         await addComment(topicId, content, token);
-        fetchTopics();
+        fetchTopics(); // Fetch all topics again to update the comments
       } catch (error) {
         console.error('Failed to add comment:', error);
       }
     }
   };
 
-  const handleCreateTopic = async (content: string, priority: number) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      try {
-        await createTopic(content, priority, token);
-        fetchTopics();
-      } catch (error) {
-        console.error('Failed to create topic:', error);
-      }
-    }
+  const handleExpandTopic = (topicId: number) => {
+    setExpandedTopic(expandedTopic === topicId ? null : topicId);
   };
 
   if (loading) {
@@ -139,34 +134,41 @@ const TopicList: React.FC = () => {
       ) : (
         <List>
           {topics.map((topic) => (
-            <ListItem key={topic.id}>
-              <ListItemText
-                primary={topic.content}
-                secondary={`By ${topic.user.username} on ${format(new Date(topic.createdAt), 'PPpp')}`}
-              />
-              <PrioritySelector
-                priority={topic.priority}
-                onChange={(newPriority) => handleEditTopic(topic.id, topic.content, newPriority)}
-              />
-              <Checkbox
-                checked={topic.discussed}
-                onChange={() => handleToggleDiscussed(topic.id)}
-                inputProps={{ 'aria-label': 'Toggle discussed' }}
-              />
-              <IconButton onClick={() => setEditingTopic(topic)}>
-                <EditIcon />
-              </IconButton>
-              {topic.discussed && !topic.archived && (
-                <IconButton onClick={() => handleArchiveTopic(topic.id)}>
-                  <ArchiveIcon />
+            <React.Fragment key={topic.id}>
+              <ListItem>
+                <ListItemText
+                  primary={topic.content}
+                  secondary={`By ${topic.user.username} on ${format(new Date(topic.createdAt), 'PPpp')}`}
+                />
+                <PrioritySelector
+                  priority={topic.priority}
+                  onChange={(newPriority) => handleEditTopic(topic.id, topic.content, newPriority)}
+                />
+                <Checkbox
+                  checked={topic.discussed}
+                  onChange={() => handleToggleDiscussed(topic.id)}
+                  inputProps={{ 'aria-label': 'Toggle discussed' }}
+                />
+                <IconButton onClick={() => setEditingTopic(topic)}>
+                  <EditIcon />
                 </IconButton>
-              )}
-              <CommentSection
-                topicId={topic.id}
-                comments={topic.comments || []}
-                onAddComment={handleAddComment}
-              />
-            </ListItem>
+                {topic.discussed && !topic.archived && (
+                  <IconButton onClick={() => handleArchiveTopic(topic.id)}>
+                    <ArchiveIcon />
+                  </IconButton>
+                )}
+                <IconButton onClick={() => handleExpandTopic(topic.id)}>
+                  {expandedTopic === topic.id ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                </IconButton>
+              </ListItem>
+              <Collapse in={expandedTopic === topic.id}>
+                <CommentSection
+                  topicId={topic.id}
+                  comments={topic.comments || []}
+                  onAddComment={handleAddComment}
+                />
+              </Collapse>
+            </React.Fragment>
           ))}
         </List>
       )}
