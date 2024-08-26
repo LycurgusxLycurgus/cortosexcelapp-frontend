@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { List, ListItem, ListItemText, Typography, Container, Button, Checkbox, IconButton, CircularProgress, Collapse } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { getTopics, updateTopic, toggleDiscussed, archiveTopic, addComment } from '../api/api';
+import { getTopics, updateTopic, toggleDiscussed, archiveTopic, addComment, getComments } from '../api/api';
 import { format } from 'date-fns';
 import EditIcon from '@mui/icons-material/Edit';
 import ArchiveIcon from '@mui/icons-material/Archive';
@@ -22,11 +22,12 @@ interface Topic {
   user: {
     username: string;
   };
-  comments: Array<{
-    id: number;
-    content: string;
-    user: { username: string };
-  }>;
+}
+
+interface Comment {
+  id: number;
+  content: string;
+  user: { username: string };
 }
 
 const TopicList: React.FC = () => {
@@ -34,6 +35,7 @@ const TopicList: React.FC = () => {
   const [editingTopic, setEditingTopic] = useState<Topic | null>(null);
   const [loading, setLoading] = useState(true);
   const [expandedTopic, setExpandedTopic] = useState<number | null>(null);
+  const [comments, setComments] = useState<{ [topicId: number]: Comment[] }>({});
   const navigate = useNavigate();
 
   const fetchTopics = useCallback(async () => {
@@ -56,6 +58,40 @@ const TopicList: React.FC = () => {
   useEffect(() => {
     fetchTopics();
   }, [fetchTopics]);
+
+  const handleExpandTopic = async (topicId: number) => {
+    if (expandedTopic === topicId) {
+      setExpandedTopic(null);
+    } else {
+      setExpandedTopic(topicId);
+      if (!comments[topicId]) {
+        const token = localStorage.getItem('token');
+        if (token) {
+          try {
+            const fetchedComments = await getComments(topicId, token);
+            setComments(prev => ({ ...prev, [topicId]: fetchedComments }));
+          } catch (error) {
+            console.error('Failed to fetch comments:', error);
+          }
+        }
+      }
+    }
+  };
+
+  const handleAddComment = async (topicId: number, content: string) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        const addedComment = await addComment(topicId, content, token);
+        setComments(prev => ({
+          ...prev,
+          [topicId]: [...(prev[topicId] || []), addedComment]
+        }));
+      } catch (error) {
+        console.error('Failed to add comment:', error);
+      }
+    }
+  };
 
   const handleEditTopic = async (id: number, content: string, priority: number) => {
     const token = localStorage.getItem('token');
@@ -95,22 +131,6 @@ const TopicList: React.FC = () => {
         console.error('Failed to archive topic:', error);
       }
     }
-  };
-
-  const handleAddComment = async (topicId: number, content: string) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      try {
-        await addComment(topicId, content, token);
-        fetchTopics(); // Fetch all topics again to update the comments
-      } catch (error) {
-        console.error('Failed to add comment:', error);
-      }
-    }
-  };
-
-  const handleExpandTopic = (topicId: number) => {
-    setExpandedTopic(expandedTopic === topicId ? null : topicId);
   };
 
   if (loading) {
@@ -164,7 +184,7 @@ const TopicList: React.FC = () => {
               <Collapse in={expandedTopic === topic.id}>
                 <CommentSection
                   topicId={topic.id}
-                  comments={topic.comments || []}
+                  comments={comments[topic.id] || []}
                   onAddComment={handleAddComment}
                 />
               </Collapse>
