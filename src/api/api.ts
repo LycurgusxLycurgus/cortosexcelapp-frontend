@@ -34,4 +34,32 @@ export const getTopics = async (token: string) => {
   return response.data;
 };
 
+export const updateTopic = async (id: number, content: string, priority: number, token: string) => {
+  const response = await api.put(`/topics/${id}`, { content, priority }, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+};
+
+export const toggleDiscussed = async (id: number, token: string) => {
+  const response = await api.put(`/topics/${id}/discussed`, {}, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+};
+
+export const archiveTopic = async (id: number, token: string) => {
+  const response = await api.put(`/topics/${id}/archive`, {}, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+};
+
+export const addComment = async (topicId: number, content: string, token: string) => {
+  const response = await api.post(`/topics/${topicId}/comments`, { content }, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+};
+
 export default api;
