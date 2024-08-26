@@ -63,10 +63,8 @@ const TopicList: React.FC = () => {
       } catch (error) {
         if (axios.isAxiosError(error)) {
           console.error('Failed to update topic:', error.response?.data || error.message);
-        } else if (error instanceof Error) {
-          console.error('Failed to update topic:', error.message);
         } else {
-          console.error('Failed to update topic:', String(error));
+          console.error('Failed to update topic:', error);
         }
       }
     }

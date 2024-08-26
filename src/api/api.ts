@@ -31,7 +31,10 @@ export const getTopics = async (token: string) => {
   const response = await api.get('/topics', {
     headers: { Authorization: `Bearer ${token}` }
   });
-  return response.data;
+  return response.data.map((topic: any) => ({
+    ...topic,
+    comments: topic.comments || []
+  }));
 };
 
 export const updateTopic = async (id: number, content: string, priority: number, token: string) => {

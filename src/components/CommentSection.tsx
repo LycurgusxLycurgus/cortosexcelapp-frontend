@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { List, ListItem, ListItemText, TextField, Button, Typography } from '@mui/material';
 import { addComment } from '../api/api';
 
 interface Comment {
   id: number;
   content: string;
-  user: { username: string };
+  user?: { username: string };
 }
 
 interface CommentSectionProps {
@@ -45,7 +45,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({ topicId, comments: init
             <ListItem key={comment.id}>
               <ListItemText
                 primary={comment.content}
-                secondary={`By ${comment.user.username}`}
+                secondary={comment.user ? `By ${comment.user.username}` : 'Anonymous'}
               />
             </ListItem>
           ))}
