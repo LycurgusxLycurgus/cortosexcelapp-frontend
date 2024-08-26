@@ -29,6 +29,7 @@ interface Comment {
   id: number;
   content: string;
   user: { username: string };
+  createdAt: string;
 }
 
 const TopicList: React.FC = () => {
@@ -86,7 +87,7 @@ const TopicList: React.FC = () => {
         setTopics(prevTopics =>
           prevTopics.map(topic =>
             topic.id === topicId
-              ? { ...topic, comments: [...(topic.comments || []), addedComment] }
+              ? { ...topic, comments: [...topic.comments, addedComment] }
               : topic
           )
         );
@@ -187,7 +188,7 @@ const TopicList: React.FC = () => {
               <Collapse in={expandedTopics.has(topic.id)}>
                 <CommentSection
                   topicId={topic.id}
-                  comments={topic.comments || []}
+                  comments={topic.comments}
                   onAddComment={handleAddComment}
                 />
               </Collapse>

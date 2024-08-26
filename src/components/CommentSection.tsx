@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { List, ListItem, ListItemText, TextField, Button, Typography } from '@mui/material';
+import { List, ListItem, ListItemText, TextField, Button, Typography, Box } from '@mui/material';
+import { format } from 'date-fns';
 
 interface Comment {
   id: number;
   content: string;
-  user?: { username: string };
+  user: { username: string };
+  createdAt: string;
 }
 
 interface CommentSectionProps {
@@ -24,7 +26,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({ topicId, comments, onAd
   };
 
   return (
-    <div>
+    <Box sx={{ mt: 2, mb: 2 }}>
       <Typography variant="h6">Comments</Typography>
       {comments.length === 0 ? (
         <Typography variant="body2">No comments yet.</Typography>
@@ -34,7 +36,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({ topicId, comments, onAd
             <ListItem key={comment.id}>
               <ListItemText
                 primary={comment.content}
-                secondary={comment.user ? `By ${comment.user.username}` : 'Anonymous'}
+                secondary={`By ${comment.user.username} on ${format(new Date(comment.createdAt), 'PPpp')}`}
               />
             </ListItem>
           ))}
@@ -52,7 +54,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({ topicId, comments, onAd
       <Button variant="contained" onClick={handleAddComment}>
         Add Comment
       </Button>
-    </div>
+    </Box>
   );
 };
 
