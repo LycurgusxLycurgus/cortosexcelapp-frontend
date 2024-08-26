@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { List, ListItem, ListItemText, Typography, Container, Button, Checkbox, IconButton, CircularProgress } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { getTopics, updateTopic, toggleDiscussed, archiveTopic, addComment } from '../api/api';
+import { getTopics, updateTopic, toggleDiscussed, archiveTopic, addComment, createTopic } from '../api/api';
 import { format } from 'date-fns';
 import EditIcon from '@mui/icons-material/Edit';
 import ArchiveIcon from '@mui/icons-material/Archive';
 import PrioritySelector from './PrioritySelector';
 import EditTopic from './EditTopic';
 import CommentSection from './CommentSection';
+import axios from 'axios'; // Add this import
 
 interface Topic {
   id: number;
@@ -60,7 +61,14 @@ const TopicList: React.FC = () => {
         await updateTopic(id, content, priority, token);
         fetchTopics();
       } catch (error) {
-        console.error('Failed to update topic:', error);
+        if (axios.isAxiosError(error)) {
+          console.error('Failed to update topic:', error.response?.data || error.message);
+        } else if (error instanceof Error) {
+          console.error('Failed to update topic:', error.message);
+        } else {
+          console.error('Failed to update topic:', String(error));
+        }
+        // You might want to show an error message to the user here
       }
     }
   };
@@ -97,6 +105,18 @@ const TopicList: React.FC = () => {
         fetchTopics();
       } catch (error) {
         console.error('Failed to add comment:', error);
+      }
+    }
+  };
+
+  const handleCreateTopic = async (content: string, priority: number) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        await createTopic(content, priority, token);
+        fetchTopics();
+      } catch (error) {
+        console.error('Failed to create topic:', error);
       }
     }
   };

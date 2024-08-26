@@ -13,9 +13,8 @@ const PrioritySelector: React.FC<PrioritySelectorProps> = ({ priority, onChange 
 
   return (
     <Select value={priority} onChange={handleChange} size="small">
-      <MenuItem value={1}>High</MenuItem>
-      <MenuItem value={2}>Medium</MenuItem>
-      <MenuItem value={3}>Low</MenuItem>
+      <MenuItem value={1}>Urgent</MenuItem>
+      <MenuItem value={2}>Meh</MenuItem>
     </Select>
   );
 };

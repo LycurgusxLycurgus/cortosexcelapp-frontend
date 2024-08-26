@@ -20,8 +20,8 @@ export const googleSignIn = async () => {
   window.location.href = `${API_URL}/auth/google`;
 };
 
-export const createTopic = async (content: string, token: string) => {
-  const response = await api.post('/topics', { content }, {
+export const createTopic = async (content: string, priority: number, token: string) => {
+  const response = await api.post('/topics', { content, priority }, {
     headers: { Authorization: `Bearer ${token}` }
   });
   return response.data;
