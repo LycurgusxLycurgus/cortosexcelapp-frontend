@@ -8,7 +8,7 @@ import ArchiveIcon from '@mui/icons-material/Archive';
 import PrioritySelector from './PrioritySelector';
 import EditTopic from './EditTopic';
 import CommentSection from './CommentSection';
-import axios from 'axios'; // Add this import
+import axios from 'axios';
 
 interface Topic {
   id: number;
@@ -68,7 +68,6 @@ const TopicList: React.FC = () => {
         } else {
           console.error('Failed to update topic:', String(error));
         }
-        // You might want to show an error message to the user here
       }
     }
   };
@@ -80,7 +79,7 @@ const TopicList: React.FC = () => {
         await toggleDiscussed(id, token);
         fetchTopics();
       } catch (error) {
-        console.error('Failed to toggle discussed status:', error);
+        console.error('Failed to toggle discussed:', error);
       }
     }
   };
