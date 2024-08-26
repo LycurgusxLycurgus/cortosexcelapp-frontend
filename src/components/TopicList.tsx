@@ -83,10 +83,10 @@ const TopicList: React.FC = () => {
     if (token) {
       try {
         const addedComment = await addComment(topicId, content, token);
-        setTopics(prevTopics => 
-          prevTopics.map(topic => 
-            topic.id === topicId 
-              ? { ...topic, comments: [...topic.comments, addedComment] }
+        setTopics(prevTopics =>
+          prevTopics.map(topic =>
+            topic.id === topicId
+              ? { ...topic, comments: [...(topic.comments || []), addedComment] }
               : topic
           )
         );

@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { List, ListItem, ListItemText, TextField, Button, Typography } from '@mui/material';
-import { addComment } from '../api/api';
 
 interface Comment {
   id: number;
@@ -14,27 +13,13 @@ interface CommentSectionProps {
   onAddComment: (topicId: number, content: string) => void;
 }
 
-const CommentSection: React.FC<CommentSectionProps> = ({ topicId, comments: initialComments, onAddComment }) => {
+const CommentSection: React.FC<CommentSectionProps> = ({ topicId, comments, onAddComment }) => {
   const [newComment, setNewComment] = useState('');
-  const [comments, setComments] = useState<Comment[]>(initialComments || []);
 
-  useEffect(() => {
-    setComments(initialComments || []);
-  }, [initialComments]);
-
-  const handleAddComment = async () => {
+  const handleAddComment = () => {
     if (newComment.trim()) {
-      const token = localStorage.getItem('token');
-      if (token) {
-        try {
-          const addedComment = await addComment(topicId, newComment, token);
-          setComments([...comments, addedComment]);
-          setNewComment('');
-          onAddComment(topicId, newComment);
-        } catch (error) {
-          console.error('Failed to add comment:', error);
-        }
-      }
+      onAddComment(topicId, newComment);
+      setNewComment('');
     }
   };
 

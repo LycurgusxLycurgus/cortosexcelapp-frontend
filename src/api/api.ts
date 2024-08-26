@@ -30,7 +30,7 @@ export const createTopic = async (content: string, priority: number, token: stri
 export const getTopics = async (token: string) => {
   const response = await api.get('/topics', {
     headers: { Authorization: `Bearer ${token}` },
-    params: { include: 'comments' } // Add this line to request comments
+    params: { include: 'comments' }
   });
   return response.data;
 };
