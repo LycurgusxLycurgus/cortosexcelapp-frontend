@@ -1,23 +1,41 @@
 import React from 'react';
-import { AppBar, Toolbar, Typography, Button } from '@mui/material';
+import { AppBar, Toolbar, Typography, Switch, FormControlLabel } from '@mui/material';
 import { Link } from 'react-router-dom';
+import { ArcadeButton } from './ArcadeComponents';
+import { motion } from 'framer-motion';
 
-const Header: React.FC = () => {
+interface HeaderProps {
+  focusMode: boolean;
+  setFocusMode: (value: boolean) => void;
+  onAction: () => void;
+}
+
+const Header: React.FC<HeaderProps> = ({ focusMode, setFocusMode, onAction }) => {
   return (
-    <AppBar position="static">
+    <AppBar position="static" component={motion.div} initial={{ y: -50 }} animate={{ y: 0 }}>
       <Toolbar>
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           CortosExcelApp
         </Typography>
-        <Button color="inherit" component={Link} to="/login">
+        <FormControlLabel
+          control={
+            <Switch
+              checked={focusMode}
+              onChange={(e) => setFocusMode(e.target.checked)}
+              color="secondary"
+            />
+          }
+          label="Focus Mode"
+        />
+        <ArcadeButton color="inherit" onClick={onAction} component={Link} to="/login">
           Login
-        </Button>
-        <Button color="inherit" component={Link} to="/register">
+        </ArcadeButton>
+        <ArcadeButton color="inherit" onClick={onAction} component={Link} to="/register">
           Register
-        </Button>
-        <Button color="inherit" component={Link} to="/topics">
+        </ArcadeButton>
+        <ArcadeButton color="inherit" onClick={onAction} component={Link} to="/topics">
           Topics
-        </Button>
+        </ArcadeButton>
       </Toolbar>
     </AppBar>
   );

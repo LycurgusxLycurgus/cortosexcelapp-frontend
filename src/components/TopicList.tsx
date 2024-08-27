@@ -7,6 +7,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import ArchiveIcon from '@mui/icons-material/Archive';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ArcadeButton, PixelatedBox } from './ArcadeComponents';
 import PrioritySelector from './PrioritySelector';
 import EditTopic from './EditTopic';
 import CommentSection from './CommentSection';
@@ -32,7 +34,12 @@ interface Comment {
   createdAt: string;
 }
 
-const TopicList: React.FC = () => {
+interface TopicListProps {
+  focusMode: boolean;
+  onAction: () => void;
+}
+
+const TopicList: React.FC<TopicListProps> = ({ focusMode, onAction }) => {
   const [topics, setTopics] = useState<Topic[]>([]);
   const [editingTopic, setEditingTopic] = useState<Topic | null>(null);
   const [loading, setLoading] = useState(true);
@@ -91,6 +98,7 @@ const TopicList: React.FC = () => {
               : topic
           )
         );
+        onAction(); // Call onAction when a comment is added
       } catch (error) {
         console.error('Failed to add comment:', error);
       }
@@ -146,54 +154,73 @@ const TopicList: React.FC = () => {
   }
 
   return (
-    <Container maxWidth="md">
+    <PixelatedBox>
       <Typography variant="h4" component="h1" gutterBottom>
         Topics
       </Typography>
-      <Button variant="contained" color="primary" onClick={() => navigate('/create-topic')}>
-        Create New Topic
-      </Button>
+      {!focusMode && (
+        <ArcadeButton variant="contained" color="primary" onClick={() => { navigate('/create-topic'); onAction(); }}>
+          Create New Topic
+        </ArcadeButton>
+      )}
       {topics.length === 0 ? (
         <Typography variant="body1" sx={{ mt: 2 }}>No topics available. Create a new one!</Typography>
       ) : (
         <List>
-          {topics.map((topic) => (
-            <React.Fragment key={topic.id}>
-              <ListItem>
-                <ListItemText
-                  primary={topic.content}
-                  secondary={`By ${topic.user.username} on ${format(new Date(topic.createdAt), 'PPpp')}`}
-                />
-                <PrioritySelector
-                  priority={topic.priority}
-                  onChange={(newPriority) => handleEditTopic(topic.id, topic.content, newPriority)}
-                />
-                <Checkbox
-                  checked={topic.discussed}
-                  onChange={() => handleToggleDiscussed(topic.id)}
-                  inputProps={{ 'aria-label': 'Toggle discussed' }}
-                />
-                <IconButton onClick={() => setEditingTopic(topic)}>
-                  <EditIcon />
-                </IconButton>
-                {topic.discussed && !topic.archived && (
-                  <IconButton onClick={() => handleArchiveTopic(topic.id)}>
-                    <ArchiveIcon />
+          <AnimatePresence>
+            {topics.map((topic) => (
+              <motion.div
+                key={topic.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
+              >
+                <ListItem>
+                  <ListItemText
+                    primary={topic.content}
+                    secondary={`Created by ${topic.user.username} on ${format(new Date(topic.createdAt), 'PPP')}`}
+                  />
+                  {!focusMode && (
+                    <>
+                      <PrioritySelector priority={topic.priority} onChange={(newPriority) => handleEditTopic(topic.id, topic.content, newPriority)} />
+                      <Checkbox
+                        checked={topic.discussed}
+                        onChange={() => handleToggleDiscussed(topic.id)}
+                        color="primary"
+                      />
+                      <IconButton onClick={() => setEditingTopic(topic)}>
+                        <EditIcon />
+                      </IconButton>
+                      {!topic.archived && (
+                        <IconButton onClick={() => handleArchiveTopic(topic.id)}>
+                          <ArchiveIcon />
+                        </IconButton>
+                      )}
+                    </>
+                  )}
+                  <IconButton onClick={() => handleExpandTopic(topic.id)}>
+                    {expandedTopics.has(topic.id) ? <ExpandLessIcon /> : <ExpandMoreIcon />}
                   </IconButton>
-                )}
-                <IconButton onClick={() => handleExpandTopic(topic.id)}>
-                  {expandedTopics.has(topic.id) ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-                </IconButton>
-              </ListItem>
-              <Collapse in={expandedTopics.has(topic.id)}>
-                <CommentSection
-                  topicId={topic.id}
-                  comments={topic.comments}
-                  onAddComment={handleAddComment}
-                />
-              </Collapse>
-            </React.Fragment>
-          ))}
+                </ListItem>
+                <AnimatePresence>
+                  {expandedTopics.has(topic.id) && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                    >
+                      <CommentSection
+                        topicId={topic.id}
+                        comments={topic.comments}
+                        onAddComment={handleAddComment}
+                      />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </List>
       )}
       {editingTopic && (
@@ -204,7 +231,7 @@ const TopicList: React.FC = () => {
           onSave={handleEditTopic}
         />
       )}
-    </Container>
+    </PixelatedBox>
   );
 };
 

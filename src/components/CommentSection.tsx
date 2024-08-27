@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { List, ListItem, ListItemText, TextField, Button, Typography, Box } from '@mui/material';
-import { format } from 'date-fns';
+import { List, ListItem, ListItemText, TextField, Typography } from '@mui/material';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ArcadeButton, PixelatedBox } from './ArcadeComponents';
 
 interface Comment {
   id: number;
@@ -18,43 +19,51 @@ interface CommentSectionProps {
 const CommentSection: React.FC<CommentSectionProps> = ({ topicId, comments, onAddComment }) => {
   const [newComment, setNewComment] = useState('');
 
-  const handleAddComment = () => {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
     if (newComment.trim()) {
-      onAddComment(topicId, newComment);
+      onAddComment(topicId, newComment.trim());
       setNewComment('');
     }
   };
 
   return (
-    <Box sx={{ mt: 2, mb: 2 }}>
+    <PixelatedBox>
       <Typography variant="h6">Comments</Typography>
-      {comments.length === 0 ? (
-        <Typography variant="body2">No comments yet.</Typography>
-      ) : (
-        <List>
+      <List>
+        <AnimatePresence>
           {comments.map((comment) => (
-            <ListItem key={comment.id}>
-              <ListItemText
-                primary={comment.content}
-                secondary={`By ${comment.user.username} on ${format(new Date(comment.createdAt), 'PPpp')}`}
-              />
-            </ListItem>
+            <motion.div
+              key={comment.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <ListItem>
+                <ListItemText
+                  primary={comment.content}
+                  secondary={`${comment.user.username} - ${new Date(comment.createdAt).toLocaleString()}`}
+                />
+              </ListItem>
+            </motion.div>
           ))}
-        </List>
-      )}
-      <TextField
-        label="Add a comment"
-        multiline
-        rows={2}
-        value={newComment}
-        onChange={(e) => setNewComment(e.target.value)}
-        fullWidth
-        margin="normal"
-      />
-      <Button variant="contained" onClick={handleAddComment}>
-        Add Comment
-      </Button>
-    </Box>
+        </AnimatePresence>
+      </List>
+      <form onSubmit={handleSubmit}>
+        <TextField
+          fullWidth
+          variant="outlined"
+          placeholder="Add a comment..."
+          value={newComment}
+          onChange={(e) => setNewComment(e.target.value)}
+          margin="normal"
+        />
+        <ArcadeButton type="submit" variant="contained" color="primary">
+          Add Comment
+        </ArcadeButton>
+      </form>
+    </PixelatedBox>
   );
 };
 

@@ -1,0 +1,141 @@
+Backend API test
+Version
+CURRENT
+
+Language
+cURL
+Documentation
+Backend API test
+﻿
+
+POST
+Register user
+http://localhost:3000/users
+﻿
+
+Body
+raw (json)
+json
+{
+  "username": "testuser",
+  "password": "StrongPassword1!"
+}
+
+POST
+Login
+http://localhost:3000/auth/login
+﻿
+
+Body
+raw (json)
+json
+{
+  "username": "testuser",
+  "password": "StrongPassword1!"
+}
+
+POST
+Create Topic
+http://localhost:3000/topics
+﻿
+
+Authorization
+Bearer Token
+Token
+<token>
+Body
+raw (json)
+json
+{
+  "content": "This is a test note."
+}
+
+GET
+Get all notes
+http://localhost:3000/topics
+﻿
+
+Authorization
+Bearer Token
+Token
+<token>
+Body
+raw (json)
+
+PUT
+Edit topic
+http://localhost:3000/topics/11
+﻿
+
+Request Headers
+Content-Type
+application/json
+Authorization
+Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3R1c2VyIiwic3ViIjo5LCJpYXQiOjE3MjQ2MjQxNzgsImV4cCI6MTcyNDYyNzc3OH0.gvkteSQ314ASp6mlK29W_IXuLpZNmLj4rtKQIO-tgkE
+Body
+raw (json)
+json
+   {
+     "content": "Updated topic content"
+   }
+
+
+POST
+Create topic w-priority
+http://localhost:3000/topics
+﻿
+
+Authorization
+Bearer Token
+Token
+<token>
+Body
+raw (json)
+json
+   {
+     "content": "This is a new topic",
+     "priority": 1
+   }
+
+
+POST
+Comments
+http://localhost:3000/topics/11/comments
+﻿
+
+Authorization
+Bearer Token
+Token
+<token>
+Body
+raw (json)
+json
+{
+  "content": "This is a new comment"
+}
+
+
+PUT
+Toggle discussed/not-discussed
+http://localhost:3000/topics/11/discussed
+﻿
+
+Authorization
+Bearer Token
+Token
+<token>
+Body
+raw (json)
+
+PUT
+Archive topics
+http://localhost:3000/topics/11/archive
+﻿
+
+Authorization
+Bearer Token
+Token
+<token>
+Body
+raw (json)
+

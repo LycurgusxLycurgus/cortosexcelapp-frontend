@@ -1,10 +1,16 @@
 import React, { useState } from 'react';
-import { TextField, Button, Typography, Container, Box, Alert, Divider } from '@mui/material';
+import { TextField, Typography, Container, Box, Alert, Divider } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
 import { register } from '../api/api';
+import { motion } from 'framer-motion';
+import { ArcadeButton, PixelatedBox } from './ArcadeComponents';
 
-const Register: React.FC = () => {
+interface Props {
+  onAction: () => void;
+}
+
+const Register: React.FC<Props> = ({ onAction }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -26,6 +32,7 @@ const Register: React.FC = () => {
 
     try {
       await register(username, password);
+      onAction(); // Call onAction after successful registration
       navigate('/login');
     } catch (error: any) {
       setError(error.response?.data?.message || 'Registration failed. Please try again.');
@@ -45,39 +52,47 @@ const Register: React.FC = () => {
 
   return (
     <Container maxWidth="xs">
-      <Box sx={{ mt: 8, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <Typography component="h1" variant="h5">
-          Register
-        </Typography>
-        {error && <Alert severity="error" sx={{ mt: 2, width: '100%' }}>{error}</Alert>}
-        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            label="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            label="Password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
-            Register
-          </Button>
-        </Box>
-        <Divider sx={{ width: '100%', my: 2 }}>OR</Divider>
-        <GoogleLogin
-          onSuccess={handleGoogleSuccess}
-          onError={handleGoogleError}
-        />
-      </Box>
+      <motion.div
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <PixelatedBox>
+          <Box sx={{ mt: 4, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <Typography component="h1" variant="h5">
+              Register
+            </Typography>
+            {error && <Alert severity="error" sx={{ mt: 2, width: '100%' }}>{error}</Alert>}
+            <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                label="Username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                label="Password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <ArcadeButton type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
+                Register
+              </ArcadeButton>
+            </Box>
+            <Divider sx={{ width: '100%', my: 2 }}>OR</Divider>
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={handleGoogleError}
+            />
+          </Box>
+        </PixelatedBox>
+      </motion.div>
     </Container>
   );
 };

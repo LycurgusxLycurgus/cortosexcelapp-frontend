@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
-import { TextField, Button, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
+import React, { useState, forwardRef } from 'react';
+import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Paper, PaperProps } from '@mui/material';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ArcadeButton } from './ArcadeComponents';
 import PrioritySelector from './PrioritySelector';
 
 interface EditTopicProps {
@@ -8,6 +10,10 @@ interface EditTopicProps {
   onClose: () => void;
   onSave: (id: number, content: string, priority: number) => void;
 }
+
+const MotionPaper = forwardRef<HTMLDivElement, PaperProps>((props, ref) => {
+  return <Paper component={motion.div} ref={ref} {...props} />;
+});
 
 const EditTopic: React.FC<EditTopicProps> = ({ topic, open, onClose, onSave }) => {
   const [content, setContent] = useState(topic.content);
@@ -19,26 +25,45 @@ const EditTopic: React.FC<EditTopicProps> = ({ topic, open, onClose, onSave }) =
   };
 
   return (
-    <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Edit Topic</DialogTitle>
-      <DialogContent>
-        <TextField
-          autoFocus
-          margin="dense"
-          label="Content"
-          fullWidth
-          multiline
-          rows={4}
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-        />
-        <PrioritySelector priority={priority} onChange={setPriority} />
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button onClick={handleSave}>Save</Button>
-      </DialogActions>
-    </Dialog>
+    <AnimatePresence>
+      {open && (
+        <Dialog
+          open={open}
+          onClose={onClose}
+          PaperComponent={MotionPaper}
+          PaperProps={{
+            initial: { opacity: 0, y: -50 },
+            animate: { opacity: 1, y: 0 },
+            exit: { opacity: 0, y: 50 },
+            transition: { duration: 0.3 },
+          }}
+        >
+          <DialogTitle>Edit Topic</DialogTitle>
+          <DialogContent>
+            <TextField
+              autoFocus
+              margin="dense"
+              label="Topic Content"
+              type="text"
+              fullWidth
+              multiline
+              rows={4}
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+            />
+            <PrioritySelector priority={priority} onChange={setPriority} />
+          </DialogContent>
+          <DialogActions>
+            <ArcadeButton onClick={onClose} color="primary">
+              Cancel
+            </ArcadeButton>
+            <ArcadeButton onClick={handleSave} color="primary">
+              Save
+            </ArcadeButton>
+          </DialogActions>
+        </Dialog>
+      )}
+    </AnimatePresence>
   );
 };
 
