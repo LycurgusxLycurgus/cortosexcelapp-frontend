@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Typography, Box, Grid } from '@mui/material';
 import { motion, AnimatePresence } from 'framer-motion';
-import { PixelatedBox, ArcadeButton, ArcadeScreen } from '../ArcadeComponents';
+import { PixelatedBox, ArcadeScreen } from '../ArcadeComponents';
 import useTopicList from './useTopicList';
 import { Topic } from './types';
 import TopicArcadeMachine from './TopicArcadeMachine';
@@ -33,16 +33,18 @@ export const TopicList: React.FC<TopicListProps> = ({ focusMode, onAction }) => 
       <Typography variant="h4" component="h1" gutterBottom>
         Topic Arcade
       </Typography>
-      <ArcadeButton onClick={() => setIsCreatingTopic(true)} sx={{ mb: 2 }}>
-        Create New Topic
-      </ArcadeButton>
+      <Box sx={{ mb: 2 }}>
+        <ArcadeScreen onClick={() => setIsCreatingTopic(true)} sx={{ cursor: 'pointer', p: 2, textAlign: 'center' }}>
+          <Typography variant="h6">Create New Topic</Typography>
+        </ArcadeScreen>
+      </Box>
       <Grid container spacing={2}>
         <Grid item xs={12} md={6}>
           <Typography variant="h5" gutterBottom>Urgent</Typography>
           <TopicGrid topics={urgentTopics} setSelectedTopic={setSelectedTopic} />
         </Grid>
         <Grid item xs={12} md={6}>
-          <Typography variant="h5" gutterBottom>Meh</Typography>
+          <Typography variant="h5" gutterBottom>Other Topics</Typography>
           <TopicGrid topics={otherTopics} setSelectedTopic={setSelectedTopic} />
         </Grid>
       </Grid>
@@ -74,13 +76,11 @@ export const TopicList: React.FC<TopicListProps> = ({ focusMode, onAction }) => 
           </motion.div>
         )}
       </AnimatePresence>
-      {isCreatingTopic && (
-        <CreateTopic
-          open={isCreatingTopic}
-          onClose={() => setIsCreatingTopic(false)}
-          onCreateTopic={handleCreateTopic}
-        />
-      )}
+      <CreateTopic
+        open={isCreatingTopic}
+        onClose={() => setIsCreatingTopic(false)}
+        onCreateTopic={handleCreateTopic}
+      />
     </PixelatedBox>
   );
 };
@@ -90,26 +90,29 @@ const TopicGrid: React.FC<{ topics: Topic[], setSelectedTopic: (topic: Topic) =>
     {topics.map((topic) => (
       <Grid item xs={12} sm={6} key={topic.id}>
         <ArcadeScreen
+          onClick={() => setSelectedTopic(topic)}
           sx={{
             height: '100%',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
+            cursor: 'pointer',
+            transition: 'transform 0.2s',
+            '&:hover': {
+              transform: 'scale(1.05)',
+            },
           }}
         >
           <Typography variant="h6" gutterBottom>
             {topic.content.length > 50 ? `${topic.content.substring(0, 50)}...` : topic.content}
           </Typography>
-          <Box>
-            <Typography variant="caption" display="block" gutterBottom>
-              Created by: {topic.createdBy}
+          <Box sx={{ mt: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+            <Typography variant="caption">
+              {topic.user?.username || 'Unknown user'}
             </Typography>
-            <Typography variant="caption" display="block" gutterBottom>
-              Created at: {new Date(topic.createdAt).toLocaleString()}
+            <Typography variant="caption">
+              {new Date(topic.createdAt).toLocaleDateString()}
             </Typography>
-            <ArcadeButton onClick={() => setSelectedTopic(topic)}>
-              Open Topic
-            </ArcadeButton>
           </Box>
         </ArcadeScreen>
       </Grid>
