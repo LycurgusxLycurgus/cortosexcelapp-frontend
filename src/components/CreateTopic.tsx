@@ -10,7 +10,7 @@ interface CreateTopicProps {
 
 const CreateTopic: React.FC<CreateTopicProps> = ({ onClose, onCreateTopic }) => {
   const [content, setContent] = useState('');
-  const [priority, setPriority] = useState(2); // Default to 'meh' priority
+  const [priority, setPriority] = useState<number>(2); // Default to 'Meh' priority
 
   const handleSubmit = () => {
     onCreateTopic(content, priority);
@@ -36,7 +36,10 @@ const CreateTopic: React.FC<CreateTopicProps> = ({ onClose, onCreateTopic }) => 
           <Typography variant="caption" display="block" gutterBottom>
             Set Priority:
           </Typography>
-          <PrioritySelector priority={priority} onChange={setPriority} />
+          <PrioritySelector
+            priority={priority}
+            onChange={(newPriority) => setPriority(newPriority)}
+          />
         </Box>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 1 }}>
           <ArcadeButton onClick={onClose}>Cancel</ArcadeButton>

@@ -19,6 +19,9 @@ const ArcadeSelect = styled(Select)(({ theme }) => ({
   '& .MuiOutlinedInput-notchedOutline': {
     border: 'none',
   },
+  '& .MuiSelect-select': {
+    padding: '10px',
+  },
 }));
 
 const ArcadeMenuItem = styled(MenuItem)(({ theme }) => ({
@@ -38,10 +41,8 @@ const ArcadeMenuItem = styled(MenuItem)(({ theme }) => ({
 
 const PrioritySelector: React.FC<PrioritySelectorProps> = ({ priority, onChange }) => {
   const handleChange = (event: SelectChangeEvent<unknown>, child: React.ReactNode) => {
-    const newValue = event.target.value;
-    if (typeof newValue === 'number') {
-      onChange(newValue);
-    }
+    const newValue = event.target.value as number;
+    onChange(newValue);
   };
 
   return (

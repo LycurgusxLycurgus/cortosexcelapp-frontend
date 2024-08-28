@@ -9,13 +9,13 @@ import CreateTopic from '../CreateTopic';
 import { useModal } from '../../contexts/ModalContext';
 import { keyframes } from '@mui/system';
 
-// Define the scanline animation
+// Define the scanline animation for the "Create New Topic" button
 const scanlineAnimation = keyframes`
   0% { background-position: 0 0; }
   100% { background-position: 0 100%; }
 `;
 
-// Define the sweep animation
+// Define the sweep animation for the topic cards
 const sweepAnimation = keyframes`
   0% { transform: translateX(-100%); }
   100% { transform: translateX(100%); }
@@ -93,7 +93,6 @@ export const TopicList: React.FC<TopicListProps> = ({ focusMode, onAction }) => 
                   position: 'relative',
                   overflow: 'hidden',
                   '&:hover': {
-                    animation: `${glowAnimation} 1.5s infinite alternate`,
                     '&::before': {
                       content: '""',
                       position: 'absolute',
@@ -103,7 +102,7 @@ export const TopicList: React.FC<TopicListProps> = ({ focusMode, onAction }) => 
                       bottom: 0,
                       background: 'linear-gradient(90deg, transparent, rgba(0, 255, 0, 0.4), transparent)',
                       transform: 'translateX(-100%)',
-                      animation: `${sweepAnimation} 3s linear infinite`,
+                      animation: `${sweepAnimation} 1.5s linear infinite`,
                       pointerEvents: 'none',
                     },
                   },
