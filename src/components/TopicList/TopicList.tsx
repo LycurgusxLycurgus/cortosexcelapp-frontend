@@ -34,9 +34,33 @@ export const TopicList: React.FC<TopicListProps> = ({ focusMode, onAction }) => 
         Topic Arcade
       </Typography>
       <Box sx={{ mb: 2 }}>
-        <ArcadeScreen onClick={() => setIsCreatingTopic(true)} sx={{ cursor: 'pointer', p: 2, textAlign: 'center' }}>
-          <Typography variant="h6">Create New Topic</Typography>
-        </ArcadeScreen>
+        <motion.div
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          animate={{
+            boxShadow: ['0 0 0 0 rgba(0, 255, 0, 0)', '0 0 0 20px rgba(0, 255, 0, 0)'],
+          }}
+          transition={{
+            duration: 1,
+            repeat: Infinity,
+            repeatType: 'reverse',
+          }}
+        >
+          <ArcadeScreen
+            onClick={() => setIsCreatingTopic(true)}
+            sx={{
+              cursor: 'pointer',
+              p: 2,
+              textAlign: 'center',
+              transition: 'all 0.3s ease',
+              '&:hover': {
+                backgroundColor: 'rgba(0, 255, 0, 0.1)',
+              },
+            }}
+          >
+            <Typography variant="h6">Create New Topic</Typography>
+          </ArcadeScreen>
+        </motion.div>
       </Box>
       <Grid container spacing={2}>
         <Grid item xs={12} md={6}>
@@ -76,11 +100,39 @@ export const TopicList: React.FC<TopicListProps> = ({ focusMode, onAction }) => 
           </motion.div>
         )}
       </AnimatePresence>
-      <CreateTopic
-        open={isCreatingTopic}
-        onClose={() => setIsCreatingTopic(false)}
-        onCreateTopic={handleCreateTopic}
-      />
+      <AnimatePresence>
+        {isCreatingTopic && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              backgroundColor: 'rgba(0, 0, 0, 0.7)',
+              zIndex: 1000,
+            }}
+          >
+            <motion.div
+              initial={{ scale: 0.8 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.8 }}
+            >
+              <CreateTopic
+                open={isCreatingTopic}
+                onClose={() => setIsCreatingTopic(false)}
+                onCreateTopic={handleCreateTopic}
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </PixelatedBox>
   );
 };
@@ -89,32 +141,37 @@ const TopicGrid: React.FC<{ topics: Topic[], setSelectedTopic: (topic: Topic) =>
   <Grid container spacing={2}>
     {topics.map((topic) => (
       <Grid item xs={12} sm={6} key={topic.id}>
-        <ArcadeScreen
-          onClick={() => setSelectedTopic(topic)}
-          sx={{
-            height: '100%',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            cursor: 'pointer',
-            transition: 'transform 0.2s',
-            '&:hover': {
-              transform: 'scale(1.05)',
-            },
+        <motion.div
+          whileHover={{
+            scale: 1.05,
+            boxShadow: '0 0 15px rgba(0, 255, 0, 0.5)',
           }}
+          whileTap={{ scale: 0.95 }}
         >
-          <Typography variant="h6" gutterBottom>
-            {topic.content.length > 50 ? `${topic.content.substring(0, 50)}...` : topic.content}
-          </Typography>
-          <Box sx={{ mt: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-            <Typography variant="caption">
-              {topic.user?.username || 'Unknown user'}
+          <ArcadeScreen
+            onClick={() => setSelectedTopic(topic)}
+            sx={{
+              height: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              '&:hover': {
+                backgroundColor: 'rgba(0, 255, 0, 0.1)',
+              },
+            }}
+          >
+            <Typography variant="h6" gutterBottom>
+              {topic.content.length > 50 ? `${topic.content.substring(0, 50)}...` : topic.content}
             </Typography>
-            <Typography variant="caption">
-              {new Date(topic.createdAt).toLocaleDateString()}
-            </Typography>
-          </Box>
-        </ArcadeScreen>
+            <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-end' }}>
+              <Typography variant="caption">
+                {topic.user?.username || 'Unknown user'}
+              </Typography>
+            </Box>
+          </ArcadeScreen>
+        </motion.div>
       </Grid>
     ))}
   </Grid>
