@@ -1,6 +1,5 @@
 import React from 'react';
 import { AppBar, Toolbar, Typography, Switch, FormControlLabel } from '@mui/material';
-import { Link } from 'react-router-dom';
 import { ArcadeButton } from './ArcadeComponents';
 import { motion } from 'framer-motion';
 
@@ -27,13 +26,13 @@ const Header: React.FC<HeaderProps> = ({ focusMode, setFocusMode, onAction }) =>
           }
           label="Focus Mode"
         />
-        <ArcadeButton color="inherit" onClick={onAction} component={Link} to="/login">
+        <ArcadeButton color="inherit" onClick={onAction} to="/login">
           Login
         </ArcadeButton>
-        <ArcadeButton color="inherit" onClick={onAction} component={Link} to="/register">
+        <ArcadeButton color="inherit" onClick={onAction} to="/register">
           Register
         </ArcadeButton>
-        <ArcadeButton color="inherit" onClick={onAction} component={Link} to="/topics">
+        <ArcadeButton color="inherit" onClick={onAction} to="/topics">
           Topics
         </ArcadeButton>
       </Toolbar>

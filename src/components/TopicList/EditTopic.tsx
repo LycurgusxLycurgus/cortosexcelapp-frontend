@@ -1,8 +1,8 @@
 import React, { useState, forwardRef } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Paper, PaperProps } from '@mui/material';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArcadeButton } from './ArcadeComponents';
-import PrioritySelector from './PrioritySelector';
+import { ArcadeButton } from '../ArcadeComponents';
+import PrioritySelector from '../PrioritySelector';
 
 interface EditTopicProps {
   topic: { id: number; content: string; priority: number };
@@ -67,4 +67,4 @@ const EditTopic: React.FC<EditTopicProps> = ({ topic, open, onClose, onSave }) =
   );
 };
 
-// export default EditTopic;
+export default EditTopic;

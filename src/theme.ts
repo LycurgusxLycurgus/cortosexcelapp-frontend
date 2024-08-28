@@ -2,6 +2,7 @@ import { createTheme } from '@mui/material/styles';
 
 const theme = createTheme({
   palette: {
+    mode: 'dark',
     primary: {
       main: '#00ff00', // Neon green
     },
@@ -9,38 +10,50 @@ const theme = createTheme({
       main: '#ff00ff', // Neon pink
     },
     background: {
-      default: '#000000', // Dark background
-      paper: '#111111',
+      default: '#000000', // Black
+      paper: '#111111', // Dark gray
     },
     text: {
-      primary: '#ffffff',
-      secondary: '#00ffff', // Neon cyan
+      primary: '#00ff00', // Neon green
+      secondary: '#ff00ff', // Neon pink
     },
   },
   typography: {
     fontFamily: '"Press Start 2P", cursive',
     h1: {
+      fontSize: '2.5rem',
+    },
+    h2: {
       fontSize: '2rem',
-      letterSpacing: '0.1em',
+    },
+    h3: {
+      fontSize: '1.75rem',
+    },
+    h4: {
+      fontSize: '1.5rem',
+    },
+    h5: {
+      fontSize: '1.25rem',
+    },
+    h6: {
+      fontSize: '1rem',
     },
     body1: {
       fontSize: '0.875rem',
-      letterSpacing: '0.05em',
+    },
+    body2: {
+      fontSize: '0.75rem',
     },
   },
   components: {
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          borderRadius: 0,
-          textTransform: 'uppercase',
-          fontWeight: 'bold',
-          padding: '12px 24px',
-          '&:hover': {
-            animation: 'pulse 0.5s infinite',
-          },
-        },
-      },
+    MuiCssBaseline: {
+      styleOverrides: `
+        body {
+          background-color: #000000;
+          background-image: radial-gradient(#00ff00 1px, transparent 1px);
+          background-size: 20px 20px;
+        }
+      `,
     },
   },
 });
