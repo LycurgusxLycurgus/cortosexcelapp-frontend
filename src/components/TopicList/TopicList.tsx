@@ -6,6 +6,7 @@ import useTopicList from './useTopicList';
 import { Topic } from './types';
 import TopicArcadeMachine from './TopicArcadeMachine';
 import CreateTopic from '../CreateTopic';
+import { useModal } from '../../contexts/ModalContext';
 
 interface TopicListProps {
   focusMode: boolean;
@@ -14,8 +15,8 @@ interface TopicListProps {
 
 export const TopicList: React.FC<TopicListProps> = ({ focusMode, onAction }) => {
   const { topics, loading, handleEditTopic, handleToggleDiscussed, handleArchiveTopic, handleAddComment, handleCreateTopic } = useTopicList(onAction);
+  const { openModal, closeModal } = useModal();
   const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
-  const [isCreatingTopic, setIsCreatingTopic] = useState(false);
 
   if (loading) {
     return (
@@ -27,6 +28,18 @@ export const TopicList: React.FC<TopicListProps> = ({ focusMode, onAction }) => 
 
   const urgentTopics = topics.filter(topic => topic.priority === 1);
   const otherTopics = topics.filter(topic => topic.priority !== 1);
+
+  const handleOpenCreateTopic = () => {
+    openModal(
+      <CreateTopic
+        onClose={closeModal}
+        onCreateTopic={(content, priority) => {
+          handleCreateTopic(content, priority);
+          closeModal();
+        }}
+      />
+    );
+  };
 
   return (
     <PixelatedBox>
@@ -47,7 +60,7 @@ export const TopicList: React.FC<TopicListProps> = ({ focusMode, onAction }) => 
           }}
         >
           <ArcadeScreen
-            onClick={() => setIsCreatingTopic(true)}
+            onClick={handleOpenCreateTopic}
             sx={{
               cursor: 'pointer',
               p: 2,
@@ -97,39 +110,6 @@ export const TopicList: React.FC<TopicListProps> = ({ focusMode, onAction }) => 
               onAddComment={handleAddComment}
               focusMode={focusMode}
             />
-          </motion.div>
-        )}
-      </AnimatePresence>
-      <AnimatePresence>
-        {isCreatingTopic && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              backgroundColor: 'rgba(0, 0, 0, 0.7)',
-              zIndex: 1000,
-            }}
-          >
-            <motion.div
-              initial={{ scale: 0.8 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0.8 }}
-            >
-              <CreateTopic
-                open={isCreatingTopic}
-                onClose={() => setIsCreatingTopic(false)}
-                onCreateTopic={handleCreateTopic}
-              />
-            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>

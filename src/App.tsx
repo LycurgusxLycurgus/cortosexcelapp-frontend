@@ -10,6 +10,8 @@ import Login from './components/Login';
 import Register from './components/Register';
 import { TopicList } from './components/TopicList';
 import ExperienceBar from './components/ExperienceBar';
+import { ModalProvider } from './contexts/ModalContext';
+import Modal from './components/Modal';
 
 const App: React.FC = () => {
   const [experience, setExperience] = useState(0);
@@ -37,38 +39,41 @@ const App: React.FC = () => {
     <GoogleOAuthProvider clientId="901399407997-srevnn8uji1ifk2bmomb3pitacj6jjv7.apps.googleusercontent.com">
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <Box sx={{ backgroundColor: '#000', minHeight: '100vh' }}>
-          <Router>
-            <ArcadeLayout>
-              <Header focusMode={focusMode} setFocusMode={setFocusMode} onAction={handleExperienceGain} />
-              <AnimatePresence mode="wait">
-                <Routes>
-                  <Route path="/login" element={<Login onAction={handleExperienceGain} />} />
-                  <Route path="/register" element={<Register onAction={handleExperienceGain} />} />
-                  <Route 
-                    path="/topics" 
-                    element={
-                      <TopicList 
-                        focusMode={focusMode} 
-                        onAction={handleExperienceGain} 
-                      />
-                    } 
-                  />
-                  <Route 
-                    path="/" 
-                    element={
-                      <TopicList 
-                        focusMode={focusMode} 
-                        onAction={handleExperienceGain} 
-                      />
-                    } 
-                  />
-                </Routes>
-              </AnimatePresence>
-              {!focusMode && <ExperienceBar experience={experience} overflowClicks={overflowClicks} />}
-            </ArcadeLayout>
-          </Router>
-        </Box>
+        <ModalProvider>
+          <Box sx={{ backgroundColor: '#000', minHeight: '100vh' }}>
+            <Router>
+              <ArcadeLayout>
+                <Header focusMode={focusMode} setFocusMode={setFocusMode} onAction={handleExperienceGain} />
+                <AnimatePresence mode="wait">
+                  <Routes>
+                    <Route path="/login" element={<Login onAction={handleExperienceGain} />} />
+                    <Route path="/register" element={<Register onAction={handleExperienceGain} />} />
+                    <Route 
+                      path="/topics" 
+                      element={
+                        <TopicList 
+                          focusMode={focusMode} 
+                          onAction={handleExperienceGain} 
+                        />
+                      } 
+                    />
+                    <Route 
+                      path="/" 
+                      element={
+                        <TopicList 
+                          focusMode={focusMode} 
+                          onAction={handleExperienceGain} 
+                        />
+                      } 
+                    />
+                  </Routes>
+                </AnimatePresence>
+                {!focusMode && <ExperienceBar experience={experience} overflowClicks={overflowClicks} />}
+              </ArcadeLayout>
+            </Router>
+          </Box>
+          <Modal />
+        </ModalProvider>
       </ThemeProvider>
     </GoogleOAuthProvider>
   );
