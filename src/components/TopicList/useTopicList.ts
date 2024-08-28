@@ -58,7 +58,16 @@ const useTopicList = (onAction: () => void) => {
         setTopics(prevTopics =>
           prevTopics.map(topic =>
             topic.id === topicId
-              ? { ...topic, comments: [...topic.comments, addedComment] }
+              ? {
+                  ...topic,
+                  comments: [
+                    ...topic.comments,
+                    {
+                      ...addedComment,
+                      user: addedComment.user || { username: 'Unknown user' }
+                    }
+                  ]
+                }
               : topic
           )
         );

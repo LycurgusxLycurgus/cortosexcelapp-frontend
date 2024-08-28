@@ -6,7 +6,7 @@ import { ArcadeButton, PixelatedBox } from './ArcadeComponents';
 interface Comment {
   id: number;
   content: string;
-  user: { username: string };
+  user?: { username: string };
   createdAt: string;
 }
 
@@ -43,7 +43,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({ topicId, comments, onAd
               <ListItem>
                 <ListItemText
                   primary={comment.content}
-                  secondary={`${comment.user.username} - ${new Date(comment.createdAt).toLocaleString()}`}
+                  secondary={`${comment.user?.username || 'Unknown user'} - ${new Date(comment.createdAt).toLocaleString()}`}
                 />
               </ListItem>
             </motion.div>
