@@ -9,15 +9,12 @@ import Header from './components/Header';
 import Login from './components/Login';
 import Register from './components/Register';
 import { TopicList } from './components/TopicList';
-import CreateTopic from './components/CreateTopic';
 import ExperienceBar from './components/ExperienceBar';
-import { createTopic } from './api/api';
 
 const App: React.FC = () => {
   const [experience, setExperience] = useState(0);
   const [focusMode, setFocusMode] = useState(false);
   const [overflowClicks, setOverflowClicks] = useState(0);
-  const [isCreatingTopic, setIsCreatingTopic] = useState(false);
 
   useEffect(() => {
     if (experience > 20) {
@@ -34,19 +31,6 @@ const App: React.FC = () => {
 
   const handleExperienceGain = () => {
     setExperience((prevExperience) => prevExperience + 1);
-  };
-
-  const handleCreateTopic = async (content: string, priority: number) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      try {
-        await createTopic(content, priority, token);
-        setIsCreatingTopic(false);
-        handleExperienceGain();
-      } catch (error) {
-        console.error('Failed to create topic:', error);
-      }
-    }
   };
 
   return (
@@ -67,7 +51,6 @@ const App: React.FC = () => {
                       <TopicList 
                         focusMode={focusMode} 
                         onAction={handleExperienceGain} 
-                        onCreateTopicClick={() => setIsCreatingTopic(true)}
                       />
                     } 
                   />
@@ -77,7 +60,6 @@ const App: React.FC = () => {
                       <TopicList 
                         focusMode={focusMode} 
                         onAction={handleExperienceGain} 
-                        onCreateTopicClick={() => setIsCreatingTopic(true)}
                       />
                     } 
                   />
@@ -87,11 +69,6 @@ const App: React.FC = () => {
             </ArcadeLayout>
           </Router>
         </Box>
-        <CreateTopic
-          open={isCreatingTopic}
-          onClose={() => setIsCreatingTopic(false)}
-          onCreateTopic={handleCreateTopic}
-        />
       </ThemeProvider>
     </GoogleOAuthProvider>
   );
