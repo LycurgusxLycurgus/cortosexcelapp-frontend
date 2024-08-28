@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Box } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { motion } from 'framer-motion';
-import { PixelatedBox, ArcadeButton, ArcadeScreen, PixelText, ArcadeTextArea } from '../ArcadeComponents';
+import { ArcadeButton, ArcadeScreen, PixelText, ArcadeTextArea } from '../ArcadeComponents';
 import { Topic } from './types';
 import CommentSection from '../CommentSection';
 
@@ -38,14 +38,24 @@ const TopicArcadeMachine: React.FC<TopicArcadeMachineProps> = ({
         Topic Arcade Machine
       </PixelText>
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-        {editMode ? (
-          <ArcadeTextArea
-            value={editedContent}
-            onChange={(e) => setEditedContent(e.target.value)}
-          />
-        ) : (
-          <PixelText variant="body1">{topic.content}</PixelText>
-        )}
+        <Box sx={{ backgroundColor: '#001100', p: 2, borderRadius: '4px' }}>
+          {editMode ? (
+            <ArcadeTextArea
+              value={editedContent}
+              onChange={(e) => setEditedContent(e.target.value)}
+            />
+          ) : (
+            <PixelText variant="body1">{topic.content}</PixelText>
+          )}
+        </Box>
+        <Box>
+          <Typography variant="caption" display="block" gutterBottom>
+            Created by: {topic.createdBy}
+          </Typography>
+          <Typography variant="caption" display="block" gutterBottom>
+            Created at: {new Date(topic.createdAt).toLocaleString()}
+          </Typography>
+        </Box>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 1 }}>
           <ArcadeButton onClick={() => setEditMode(!editMode)}>
             {editMode ? 'Cancel' : 'Edit'}

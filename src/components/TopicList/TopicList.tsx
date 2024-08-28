@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Typography, Box } from '@mui/material';
+import { Typography, Box, Grid } from '@mui/material';
 import { motion, AnimatePresence } from 'framer-motion';
-import { PixelatedBox, ArcadeButton } from '../ArcadeComponents';
+import { PixelatedBox, ArcadeButton, ArcadeScreen } from '../ArcadeComponents';
 import useTopicList from './useTopicList';
 import { Topic } from './types';
 import TopicArcadeMachine from './TopicArcadeMachine';
+import CreateTopic from '../CreateTopic';
 
 interface TopicListProps {
   focusMode: boolean;
@@ -12,8 +13,9 @@ interface TopicListProps {
 }
 
 export const TopicList: React.FC<TopicListProps> = ({ focusMode, onAction }) => {
-  const { topics, loading, handleEditTopic, handleToggleDiscussed, handleArchiveTopic, handleAddComment } = useTopicList(onAction);
+  const { topics, loading, handleEditTopic, handleToggleDiscussed, handleArchiveTopic, handleAddComment, handleCreateTopic } = useTopicList(onAction);
   const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
+  const [isCreatingTopic, setIsCreatingTopic] = useState(false);
 
   if (loading) {
     return (
@@ -23,35 +25,42 @@ export const TopicList: React.FC<TopicListProps> = ({ focusMode, onAction }) => 
     );
   }
 
+  const urgentTopics = topics.filter(topic => topic.priority > 5);
+  const normalTopics = topics.filter(topic => topic.priority <= 5);
+
   return (
     <PixelatedBox>
       <Typography variant="h4" component="h1" gutterBottom>
         Topic Arcade
       </Typography>
-      <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 2 }}>
-        <AnimatePresence>
-          {topics.map((topic) => (
-            <motion.div
-              key={topic.id}
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0 }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <ArcadeButton onClick={() => setSelectedTopic(topic)}>
-                {topic.content.substring(0, 20)}...
-              </ArcadeButton>
-            </motion.div>
-          ))}
-        </AnimatePresence>
-      </Box>
+      <ArcadeButton onClick={() => setIsCreatingTopic(true)} sx={{ mb: 2 }}>
+        Create New Topic
+      </ArcadeButton>
+      <Grid container spacing={2}>
+        <Grid item xs={12} md={6}>
+          <Typography variant="h5" gutterBottom>Urgent Topics</Typography>
+          <TopicGrid topics={urgentTopics} setSelectedTopic={setSelectedTopic} />
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <Typography variant="h5" gutterBottom>Normal Topics</Typography>
+          <TopicGrid topics={normalTopics} setSelectedTopic={setSelectedTopic} />
+        </Grid>
+      </Grid>
       <AnimatePresence>
         {selectedTopic && (
           <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -50 }}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            style={{
+              position: 'fixed',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              width: '90%',
+              maxWidth: '600px',
+              zIndex: 1000,
+            }}
           >
             <TopicArcadeMachine
               topic={selectedTopic}
@@ -65,6 +74,47 @@ export const TopicList: React.FC<TopicListProps> = ({ focusMode, onAction }) => 
           </motion.div>
         )}
       </AnimatePresence>
+      {isCreatingTopic && (
+        <CreateTopic
+          open={isCreatingTopic}
+          onClose={() => setIsCreatingTopic(false)}
+          onCreateTopic={handleCreateTopic}
+        />
+      )}
     </PixelatedBox>
   );
 };
+
+const TopicGrid: React.FC<{ topics: Topic[], setSelectedTopic: (topic: Topic) => void }> = ({ topics, setSelectedTopic }) => (
+  <Grid container spacing={2}>
+    {topics.map((topic) => (
+      <Grid item xs={12} sm={6} key={topic.id}>
+        <ArcadeScreen
+          sx={{
+            height: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+          }}
+        >
+          <Typography variant="h6" gutterBottom>
+            {topic.content.length > 50 ? `${topic.content.substring(0, 50)}...` : topic.content}
+          </Typography>
+          <Box>
+            <Typography variant="caption" display="block" gutterBottom>
+              Created by: {topic.createdBy}
+            </Typography>
+            <Typography variant="caption" display="block" gutterBottom>
+              Created at: {new Date(topic.createdAt).toLocaleString()}
+            </Typography>
+            <ArcadeButton onClick={() => setSelectedTopic(topic)}>
+              Open Topic
+            </ArcadeButton>
+          </Box>
+        </ArcadeScreen>
+      </Grid>
+    ))}
+  </Grid>
+);
+
+export default TopicList;

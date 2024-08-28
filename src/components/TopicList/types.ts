@@ -1,14 +1,15 @@
 export interface Topic {
   id: number;
   content: string;
-  createdAt: string;
   priority: number;
   discussed: boolean;
-  archived: boolean;
+  createdAt: string;
+  createdBy: string;
+  comments: Comment[];
   user: {
     username: string;
   };
-  comments: Comment[];
+  archived: boolean;
 }
 
 export interface Comment {

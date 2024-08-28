@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getTopics, updateTopic, toggleDiscussed, archiveTopic, addComment } from '../../api/api';
+import { getTopics, updateTopic, toggleDiscussed, archiveTopic, addComment, createTopic } from '../../api/api';
 import { Topic } from './types';
 
 const useTopicList = (onAction: () => void) => {
@@ -107,6 +107,19 @@ const useTopicList = (onAction: () => void) => {
     }
   };
 
+  const handleCreateTopic = async (content: string, priority: number) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        await createTopic(content, priority, token);
+        fetchTopics();
+        onAction();
+      } catch (error) {
+        console.error('Failed to create topic:', error);
+      }
+    }
+  };
+
   return {
     topics,
     loading,
@@ -117,7 +130,7 @@ const useTopicList = (onAction: () => void) => {
     handleToggleDiscussed,
     handleArchiveTopic,
     handleAddComment,
-    setEditingTopic,
+    handleCreateTopic,
   };
 };
 
