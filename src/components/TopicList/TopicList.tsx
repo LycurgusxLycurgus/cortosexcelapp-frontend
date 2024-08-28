@@ -1,7 +1,7 @@
 import React from 'react';
 import { Typography, Box, Grid } from '@mui/material';
 import { motion } from 'framer-motion';
-import { PixelatedBox, ArcadeScreen, glowAnimation } from '../ArcadeComponents';
+import { PixelatedBox, ArcadeScreen } from '../ArcadeComponents';
 import useTopicList from './useTopicList';
 import { Topic } from './types';
 import TopicArcadeMachine from './TopicArcadeMachine';

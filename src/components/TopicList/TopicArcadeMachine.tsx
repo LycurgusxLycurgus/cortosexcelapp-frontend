@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { ArcadeButton, ArcadeScreen, PixelText, ArcadeTextArea } from '../ArcadeComponents';
 import { Topic } from './types';
 import CommentSection from '../CommentSection';
+import PrioritySelector from '../PrioritySelector';
 
 interface TopicArcadeMachineProps {
   topic: Topic;
@@ -26,9 +27,10 @@ const TopicArcadeMachine: React.FC<TopicArcadeMachineProps> = ({
 }) => {
   const [editMode, setEditMode] = useState(false);
   const [editedContent, setEditedContent] = useState(topic.content);
+  const [editedPriority, setEditedPriority] = useState(topic.priority);
 
   const handleSave = () => {
-    onEdit(topic.id, editedContent, topic.priority);
+    onEdit(topic.id, editedContent, editedPriority);
     setEditMode(false);
   };
 
@@ -48,6 +50,12 @@ const TopicArcadeMachine: React.FC<TopicArcadeMachineProps> = ({
             <PixelText variant="body1">{topic.content}</PixelText>
           )}
         </Box>
+        {editMode && (
+          <PrioritySelector
+            priority={editedPriority}
+            onChange={(newPriority) => setEditedPriority(newPriority)}
+          />
+        )}
         <Box>
           <Typography variant="caption" display="block" gutterBottom>
             Created by: {topic.user?.username || 'Unknown user'}
