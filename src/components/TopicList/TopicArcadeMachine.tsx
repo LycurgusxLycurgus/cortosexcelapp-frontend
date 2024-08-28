@@ -50,7 +50,7 @@ const TopicArcadeMachine: React.FC<TopicArcadeMachineProps> = ({
         </Box>
         <Box>
           <Typography variant="caption" display="block" gutterBottom>
-            Created by: {topic.createdBy}
+            Created by: {topic.user?.username || 'Unknown user'}
           </Typography>
           <Typography variant="caption" display="block" gutterBottom>
             Created at: {new Date(topic.createdAt).toLocaleString()}

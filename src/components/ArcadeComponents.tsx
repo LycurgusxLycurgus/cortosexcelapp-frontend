@@ -2,7 +2,7 @@ import { Button, ButtonProps, Box, Typography, TypographyProps, styled } from '@
 import { keyframes } from '@mui/system';
 import { Link as RouterLink } from 'react-router-dom';
 
-const glowAnimation = keyframes`
+export const glowAnimation = keyframes`
   0% { box-shadow: 0 0 5px #00ff00; }
   50% { box-shadow: 0 0 20px #00ff00, 0 0 30px #00ff00; }
   100% { box-shadow: 0 0 5px #00ff00; }

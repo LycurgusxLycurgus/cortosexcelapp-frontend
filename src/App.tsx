@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { ThemeProvider, CssBaseline } from '@mui/material';
+import { ThemeProvider, CssBaseline, Box } from '@mui/material';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { AnimatePresence } from 'framer-motion';
 import theme from './theme';
@@ -11,8 +11,7 @@ import Register from './components/Register';
 import { TopicList } from './components/TopicList';
 import CreateTopic from './components/CreateTopic';
 import ExperienceBar from './components/ExperienceBar';
-import { Box } from '@mui/material';
-import { createTopic } from './api/api'; // Import createTopic function
+import { createTopic } from './api/api';
 
 const App: React.FC = () => {
   const [experience, setExperience] = useState(0);
@@ -62,19 +61,37 @@ const App: React.FC = () => {
                 <Routes>
                   <Route path="/login" element={<Login onAction={handleExperienceGain} />} />
                   <Route path="/register" element={<Register onAction={handleExperienceGain} />} />
-                  <Route path="/topics" element={<TopicList focusMode={focusMode} onAction={handleExperienceGain} />} />
-                  <Route path="/" element={<TopicList focusMode={focusMode} onAction={handleExperienceGain} />} />
+                  <Route 
+                    path="/topics" 
+                    element={
+                      <TopicList 
+                        focusMode={focusMode} 
+                        onAction={handleExperienceGain} 
+                        onCreateTopicClick={() => setIsCreatingTopic(true)}
+                      />
+                    } 
+                  />
+                  <Route 
+                    path="/" 
+                    element={
+                      <TopicList 
+                        focusMode={focusMode} 
+                        onAction={handleExperienceGain} 
+                        onCreateTopicClick={() => setIsCreatingTopic(true)}
+                      />
+                    } 
+                  />
                 </Routes>
               </AnimatePresence>
               {!focusMode && <ExperienceBar experience={experience} overflowClicks={overflowClicks} />}
-              <CreateTopic
-                open={isCreatingTopic}
-                onClose={() => setIsCreatingTopic(false)}
-                onCreateTopic={handleCreateTopic}
-              />
             </ArcadeLayout>
           </Router>
         </Box>
+        <CreateTopic
+          open={isCreatingTopic}
+          onClose={() => setIsCreatingTopic(false)}
+          onCreateTopic={handleCreateTopic}
+        />
       </ThemeProvider>
     </GoogleOAuthProvider>
   );
