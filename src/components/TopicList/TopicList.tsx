@@ -20,13 +20,13 @@ export const TopicList: React.FC<TopicListProps> = ({ focusMode, onAction }) => 
   if (loading) {
     return (
       <PixelatedBox>
-        <Typography variant="h4">Loading Game...</Typography>
+        <Typography variant="h4">Loading Arcade...</Typography>
       </PixelatedBox>
     );
   }
 
-  const urgentTopics = topics.filter(topic => topic.priority > 5);
-  const normalTopics = topics.filter(topic => topic.priority <= 5);
+  const urgentTopics = topics.filter(topic => topic.priority === 1);
+  const otherTopics = topics.filter(topic => topic.priority !== 1);
 
   return (
     <PixelatedBox>
@@ -38,12 +38,12 @@ export const TopicList: React.FC<TopicListProps> = ({ focusMode, onAction }) => 
       </ArcadeButton>
       <Grid container spacing={2}>
         <Grid item xs={12} md={6}>
-          <Typography variant="h5" gutterBottom>Urgent Topics</Typography>
+          <Typography variant="h5" gutterBottom>Urgent</Typography>
           <TopicGrid topics={urgentTopics} setSelectedTopic={setSelectedTopic} />
         </Grid>
         <Grid item xs={12} md={6}>
-          <Typography variant="h5" gutterBottom>Normal Topics</Typography>
-          <TopicGrid topics={normalTopics} setSelectedTopic={setSelectedTopic} />
+          <Typography variant="h5" gutterBottom>Meh</Typography>
+          <TopicGrid topics={otherTopics} setSelectedTopic={setSelectedTopic} />
         </Grid>
       </Grid>
       <AnimatePresence>
