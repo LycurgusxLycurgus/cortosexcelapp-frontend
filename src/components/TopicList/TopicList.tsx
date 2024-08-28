@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Typography, Box, Grid } from '@mui/material';
 import { motion } from 'framer-motion';
 import { PixelatedBox, ArcadeScreen, glowAnimation } from '../ArcadeComponents';
@@ -29,7 +29,6 @@ interface TopicListProps {
 export const TopicList: React.FC<TopicListProps> = ({ focusMode, onAction }) => {
   const { topics, loading, handleEditTopic, handleToggleDiscussed, handleArchiveTopic, handleAddComment, handleCreateTopic } = useTopicList(onAction);
   const { openModal, closeModal } = useModal();
-  const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
 
   if (loading) {
     return (
@@ -40,7 +39,7 @@ export const TopicList: React.FC<TopicListProps> = ({ focusMode, onAction }) => 
   }
 
   const urgentTopics = topics.filter(topic => topic.priority === 1);
-  const otherTopics = topics.filter(topic => topic.priority !== 1);
+  const mehTopics = topics.filter(topic => topic.priority === 2);
 
   const handleOpenCreateTopic = () => {
     openModal(
@@ -67,6 +66,64 @@ export const TopicList: React.FC<TopicListProps> = ({ focusMode, onAction }) => 
       />
     );
   };
+
+  const renderTopicGrid = (topicList: Topic[], title: string) => (
+    <Box sx={{ mb: 4 }}>
+      <Typography variant="h5" gutterBottom>{title}</Typography>
+      <Grid container spacing={2}>
+        {topicList.map((topic) => (
+          <Grid item xs={12} sm={6} key={topic.id}>
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              style={{
+                position: 'relative',
+                overflow: 'hidden',
+              }}
+            >
+              <ArcadeScreen
+                onClick={() => handleOpenTopicArcadeMachine(topic)}
+                sx={{
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  '&:hover': {
+                    animation: `${glowAnimation} 1.5s infinite alternate`,
+                    '&::before': {
+                      content: '""',
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      background: 'linear-gradient(90deg, transparent, rgba(0, 255, 0, 0.4), transparent)',
+                      transform: 'translateX(-100%)',
+                      animation: `${sweepAnimation} 3s linear infinite`,
+                      pointerEvents: 'none',
+                    },
+                  },
+                }}
+              >
+                <Typography variant="h6" gutterBottom>
+                  {topic.content.length > 50 ? `${topic.content.substring(0, 50)}...` : topic.content}
+                </Typography>
+                <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-end' }}>
+                  <Typography variant="caption">
+                    {topic.user?.username || 'Unknown user'}
+                  </Typography>
+                </Box>
+              </ArcadeScreen>
+            </motion.div>
+          </Grid>
+        ))}
+      </Grid>
+    </Box>
+  );
 
   return (
     <PixelatedBox>
@@ -116,109 +173,10 @@ export const TopicList: React.FC<TopicListProps> = ({ focusMode, onAction }) => 
           </ArcadeScreen>
         </motion.div>
       </Box>
-      <Grid container spacing={2}>
-        {topics.map((topic) => (
-          <Grid item xs={12} sm={6} key={topic.id}>
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              style={{
-                position: 'relative',
-                overflow: 'hidden',
-              }}
-            >
-              <ArcadeScreen
-                onClick={() => handleOpenTopicArcadeMachine(topic)}
-                sx={{
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                  animation: `${glowAnimation} 1.5s infinite alternate`,
-                  position: 'relative',
-                  '&::before': {
-                    content: '""',
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    background: 'linear-gradient(90deg, transparent, rgba(0, 255, 0, 0.4), transparent)',
-                    transform: 'translateX(-100%)',
-                    animation: `${sweepAnimation} 3s linear infinite`,
-                    pointerEvents: 'none',
-                  },
-                }}
-              >
-                <Typography variant="h6" gutterBottom>
-                  {topic.content.length > 50 ? `${topic.content.substring(0, 50)}...` : topic.content}
-                </Typography>
-                <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-end' }}>
-                  <Typography variant="caption">
-                    {topic.user?.username || 'Unknown user'}
-                  </Typography>
-                </Box>
-              </ArcadeScreen>
-            </motion.div>
-          </Grid>
-        ))}
-      </Grid>
+      {renderTopicGrid(urgentTopics, "Urgent Topics")}
+      {renderTopicGrid(mehTopics, "Meh Topics")}
     </PixelatedBox>
   );
 };
-
-const TopicGrid: React.FC<{ topics: Topic[], setSelectedTopic: (topic: Topic) => void }> = ({ topics, setSelectedTopic }) => (
-  <Grid container spacing={2}>
-    {topics.map((topic) => (
-      <Grid item xs={12} sm={6} key={topic.id}>
-        <motion.div
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          style={{
-            position: 'relative',
-            overflow: 'hidden',
-          }}
-        >
-          <ArcadeScreen
-            onClick={() => setSelectedTopic(topic)}
-            sx={{
-              height: '100%',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-              animation: `${glowAnimation} 1.5s infinite alternate`,
-              position: 'relative',
-              '&::before': {
-                content: '""',
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                background: 'linear-gradient(90deg, transparent, rgba(0, 255, 0, 0.4), transparent)',
-                transform: 'translateX(-100%)',
-                animation: `${sweepAnimation} 3s linear infinite`,
-                pointerEvents: 'none',
-              },
-            }}
-          >
-            <Typography variant="h6" gutterBottom>
-              {topic.content.length > 50 ? `${topic.content.substring(0, 50)}...` : topic.content}
-            </Typography>
-            <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-end' }}>
-              <Typography variant="caption">
-                {topic.user?.username || 'Unknown user'}
-              </Typography>
-            </Box>
-          </ArcadeScreen>
-        </motion.div>
-      </Grid>
-    ))}
-  </Grid>
-);
 
 export default TopicList;
