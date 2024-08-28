@@ -1,7 +1,7 @@
 import React, { useState, forwardRef } from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Paper, PaperProps } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Paper, PaperProps } from '@mui/material';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArcadeButton } from './ArcadeComponents';
+import { ArcadeButton, ArcadeTextArea } from './ArcadeComponents';
 import PrioritySelector from './PrioritySelector';
 
 interface EditTopicProps {
@@ -40,24 +40,18 @@ const EditTopic: React.FC<EditTopicProps> = ({ topic, open, onClose, onSave }) =
         >
           <DialogTitle>Edit Topic</DialogTitle>
           <DialogContent>
-            <TextField
-              autoFocus
-              margin="dense"
-              label="Topic Content"
-              type="text"
-              fullWidth
-              multiline
-              rows={4}
+            <ArcadeTextArea
               value={content}
               onChange={(e) => setContent(e.target.value)}
+              placeholder="Edit topic content"
             />
             <PrioritySelector priority={priority} onChange={setPriority} />
           </DialogContent>
           <DialogActions>
-            <ArcadeButton onClick={onClose} color="primary">
+            <ArcadeButton onClick={onClose}>
               Cancel
             </ArcadeButton>
-            <ArcadeButton onClick={handleSave} color="primary">
+            <ArcadeButton onClick={handleSave}>
               Save
             </ArcadeButton>
           </DialogActions>
@@ -67,4 +61,4 @@ const EditTopic: React.FC<EditTopicProps> = ({ topic, open, onClose, onSave }) =
   );
 };
 
-// export default EditTopic;
+export default EditTopic;

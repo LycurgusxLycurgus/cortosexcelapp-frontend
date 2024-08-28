@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 import { ArcadeButton, ArcadeScreen, PixelText, ArcadeTextArea } from './ArcadeComponents';
 import PrioritySelector from './PrioritySelector';
 
@@ -32,15 +32,10 @@ const CreateTopic: React.FC<CreateTopicProps> = ({ onClose, onCreateTopic }) => 
             placeholder="Enter topic content"
           />
         </Box>
-        <Box>
-          <Typography variant="caption" display="block" gutterBottom>
-            Set Priority:
-          </Typography>
-          <PrioritySelector
-            priority={priority}
-            onChange={(newPriority) => setPriority(newPriority)}
-          />
-        </Box>
+        <PrioritySelector
+          priority={priority}
+          onChange={(newPriority) => setPriority(newPriority)}
+        />
         <Box sx={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 1 }}>
           <ArcadeButton onClick={onClose}>Cancel</ArcadeButton>
           <ArcadeButton onClick={handleSubmit}>Create</ArcadeButton>
