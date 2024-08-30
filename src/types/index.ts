@@ -3,5 +3,6 @@ export interface Topic {
   title: string;
   description: string;
   discussed: boolean;
+  archived: boolean;
   // Add any other properties that Topic should have
 }

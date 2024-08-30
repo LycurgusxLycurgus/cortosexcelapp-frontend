@@ -42,6 +42,24 @@ function AIChatHistory() {
     }
   };
 
+  const toggleArchived = async () => {
+    if (!topic || !topicId) return;
+
+    try {
+      const updatedTopic = { ...topic, archived: !topic.archived };
+      const response = await fetch(`/api/topics/${topicId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedTopic),
+      });
+      if (response.ok) {
+        setTopic(updatedTopic);
+      }
+    } catch (error) {
+      console.error('Error updating topic:', error);
+    }
+  };
+
   if (!topic) {
     return <div>Loading...</div>;
   }
@@ -52,13 +70,23 @@ function AIChatHistory() {
       <p>{topic.description}</p>
       <button
         onClick={toggleDiscussed}
-        className={`px-4 py-2 rounded ${
+        className={`px-4 py-2 rounded mr-2 ${
           topic.discussed
             ? 'bg-green-500 hover:bg-green-600'
             : 'bg-red-500 hover:bg-red-600'
         } text-white`}
       >
         {topic.discussed ? 'Discussed' : 'Undiscussed'}
+      </button>
+      <button
+        onClick={toggleArchived}
+        className={`px-4 py-2 rounded ${
+          topic.archived
+            ? 'bg-gray-500 hover:bg-gray-600'
+            : 'bg-blue-500 hover:bg-blue-600'
+        } text-white`}
+      >
+        {topic.archived ? 'Archived' : 'Unarchived'}
       </button>
       {/* Add other components or logic for displaying chat history */}
     </div>
