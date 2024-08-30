@@ -8,14 +8,18 @@ const ArcadeScreen = styled(Box)(({ theme }) => ({
   borderRadius: '16px',
   padding: theme.spacing(2),
   boxShadow: `0 0 20px ${theme.palette.primary.main}`,
-  minHeight: '80vh',
+  minHeight: '100vh',
   display: 'flex',
   flexDirection: 'column',
+  [theme.breakpoints.down('sm')]: {
+    borderRadius: 0,
+    border: 'none',
+  },
 }));
 
 const ArcadeLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth="lg" disableGutters>
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}

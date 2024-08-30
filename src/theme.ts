@@ -1,6 +1,6 @@
-import { createTheme } from '@mui/material/styles';
+import { createTheme, responsiveFontSizes } from '@mui/material/styles';
 
-const theme = createTheme({
+let theme = createTheme({
   palette: {
     mode: 'dark',
     primary: {
@@ -21,28 +21,34 @@ const theme = createTheme({
   typography: {
     fontFamily: '"Press Start 2P", cursive',
     h1: {
-      fontSize: '2.5rem',
+      fontSize: '2rem',
+      '@media (min-width:600px)': {
+        fontSize: '2.5rem',
+      },
     },
     h2: {
-      fontSize: '2rem',
+      fontSize: '1.75rem',
+      '@media (min-width:600px)': {
+        fontSize: '2rem',
+      },
     },
     h3: {
-      fontSize: '1.75rem',
-    },
-    h4: {
       fontSize: '1.5rem',
     },
-    h5: {
+    h4: {
       fontSize: '1.25rem',
     },
-    h6: {
+    h5: {
       fontSize: '1rem',
     },
-    body1: {
+    h6: {
       fontSize: '0.875rem',
     },
-    body2: {
+    body1: {
       fontSize: '0.75rem',
+    },
+    body2: {
+      fontSize: '0.5rem',
     },
   },
   components: {
@@ -55,7 +61,19 @@ const theme = createTheme({
         }
       `,
     },
+    MuiContainer: {
+      styleOverrides: {
+        root: {
+          padding: '1rem',
+          '@media (min-width:600px)': {
+            padding: '2rem',
+          },
+        },
+      },
+    },
   },
 });
+
+theme = responsiveFontSizes(theme);
 
 export default theme;

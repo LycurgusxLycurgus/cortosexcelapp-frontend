@@ -72,14 +72,10 @@ export const TopicList: React.FC<TopicListProps> = ({ focusMode, onAction }) => 
       <Typography variant="h5" gutterBottom>{title}</Typography>
       <Grid container spacing={2}>
         {topicList.map((topic) => (
-          <Grid item xs={12} sm={6} key={topic.id}>
+          <Grid item xs={12} sm={6} md={4} key={topic.id}>
             <motion.div
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              style={{
-                position: 'relative',
-                overflow: 'hidden',
-              }}
             >
               <ArcadeScreen
                 onClick={() => handleOpenTopicArcadeMachine(topic)}
@@ -90,25 +86,13 @@ export const TopicList: React.FC<TopicListProps> = ({ focusMode, onAction }) => 
                   justifyContent: 'space-between',
                   cursor: 'pointer',
                   transition: 'all 0.3s ease',
-                  position: 'relative',
-                  overflow: 'hidden',
+                  padding: (theme) => theme.spacing(2),
                   '&:hover': {
-                    '&::before': {
-                      content: '""',
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
-                      background: 'linear-gradient(90deg, transparent, rgba(0, 255, 0, 0.4), transparent)',
-                      transform: 'translateX(-100%)',
-                      animation: `${sweepAnimation} 1.5s linear infinite`,
-                      pointerEvents: 'none',
-                    },
+                    backgroundColor: 'rgba(0, 255, 0, 0.1)',
                   },
                 }}
               >
-                <Typography variant="h6" gutterBottom>
+                <Typography variant="body1" gutterBottom>
                   {topic.content.length > 50 ? `${topic.content.substring(0, 50)}...` : topic.content}
                 </Typography>
                 <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-end' }}>

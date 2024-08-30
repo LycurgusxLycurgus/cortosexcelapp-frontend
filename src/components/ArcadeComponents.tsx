@@ -68,6 +68,11 @@ export const PixelatedBox = styled(Box)(({ theme }) => ({
   boxShadow: '0 0 10px #00ff00',
   position: 'relative',
   overflow: 'hidden',
+  [theme.breakpoints.down('sm')]: {
+    borderRadius: '5px',
+    padding: theme.spacing(1),
+    margin: theme.spacing(1, 0),
+  },
 }));
 
 export const ArcadeScreen = styled(Box)(({ theme }) => ({
@@ -129,5 +134,9 @@ export const ArcadeTextArea = styled('textarea')(({ theme }) => ({
   '&:focus': {
     outline: 'none',
     boxShadow: '0 0 10px #00ff00',
+  },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '14px',
+    padding: '8px',
   },
 }));
