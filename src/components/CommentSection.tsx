@@ -27,6 +27,32 @@ const CommentSection: React.FC<CommentSectionProps> = ({ topicId, comments, onAd
     }
   };
 
+  const formatComment = (content: string) => {
+    // Split the content into words
+    const words = content.split(/\s+/);
+    return words.map((word, index) => {
+      if (word.startsWith('http://') || word.startsWith('https://') || word.startsWith('@http')) {
+        return (
+          <React.Fragment key={index}>
+            <a
+              href={word.startsWith('@') ? word.slice(1) : word}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                wordBreak: 'break-all',
+                color: '#00ff00',
+                textDecoration: 'underline',
+              }}
+            >
+              {word}
+            </a>{' '}
+          </React.Fragment>
+        );
+      }
+      return word + ' ';
+    });
+  };
+
   return (
     <PixelatedBox>
       <Typography variant="h6">Comments</Typography>
@@ -59,18 +85,20 @@ const CommentSection: React.FC<CommentSectionProps> = ({ topicId, comments, onAd
               >
                 <ListItem>
                   <ListItemText
-                    primary={comment.content}
+                    primary={formatComment(comment.content)}
                     secondary={`${comment.user?.username || 'Unknown user'} - ${new Date(comment.createdAt).toLocaleString()}`}
                     primaryTypographyProps={{
                       style: {
                         wordWrap: 'break-word',
                         overflowWrap: 'break-word',
+                        wordBreak: 'break-word',
                       }
                     }}
                     secondaryTypographyProps={{
                       style: {
                         wordWrap: 'break-word',
                         overflowWrap: 'break-word',
+                        wordBreak: 'break-word',
                       }
                     }}
                   />
