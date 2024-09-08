@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { List, ListItem, ListItemText, TextField, Typography } from '@mui/material';
+import { List, ListItem, ListItemText, TextField, Typography, Box } from '@mui/material';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArcadeButton, PixelatedBox } from './ArcadeComponents';
+import { ArcadeButton, PixelatedBox, ArcadeTextArea } from './ArcadeComponents';
 
 interface Comment {
   id: number;
@@ -30,34 +30,62 @@ const CommentSection: React.FC<CommentSectionProps> = ({ topicId, comments, onAd
   return (
     <PixelatedBox>
       <Typography variant="h6">Comments</Typography>
-      <List>
-        <AnimatePresence>
-          {comments.map((comment) => (
-            <motion.div
-              key={comment.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
-            >
-              <ListItem>
-                <ListItemText
-                  primary={comment.content}
-                  secondary={`${comment.user?.username || 'Unknown user'} - ${new Date(comment.createdAt).toLocaleString()}`}
-                />
-              </ListItem>
-            </motion.div>
-          ))}
-        </AnimatePresence>
-      </List>
+      <Box sx={{
+        maxHeight: '300px',
+        overflowY: 'auto',
+        '&::-webkit-scrollbar': {
+          width: '10px',
+        },
+        '&::-webkit-scrollbar-track': {
+          background: '#000',
+        },
+        '&::-webkit-scrollbar-thumb': {
+          background: '#00ff00',
+          borderRadius: '5px',
+        },
+        '&::-webkit-scrollbar-thumb:hover': {
+          background: '#00cc00',
+        },
+      }}>
+        <List>
+          <AnimatePresence>
+            {comments.map((comment) => (
+              <motion.div
+                key={comment.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
+              >
+                <ListItem>
+                  <ListItemText
+                    primary={comment.content}
+                    secondary={`${comment.user?.username || 'Unknown user'} - ${new Date(comment.createdAt).toLocaleString()}`}
+                    primaryTypographyProps={{
+                      style: {
+                        wordWrap: 'break-word',
+                        overflowWrap: 'break-word',
+                      }
+                    }}
+                    secondaryTypographyProps={{
+                      style: {
+                        wordWrap: 'break-word',
+                        overflowWrap: 'break-word',
+                      }
+                    }}
+                  />
+                </ListItem>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </List>
+      </Box>
       <form onSubmit={handleSubmit}>
-        <TextField
-          fullWidth
-          variant="outlined"
-          placeholder="Add a comment..."
+        <ArcadeTextArea
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
-          margin="normal"
+          placeholder="Add a comment..."
+          sx={{ width: '100%', marginTop: 2, marginBottom: 2 }}
         />
         <ArcadeButton type="submit" variant="contained" color="primary">
           Add Comment
